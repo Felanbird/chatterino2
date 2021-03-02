@@ -59,6 +59,7 @@ private:
     void parseMessageID();
     void parseRoomID();
     void appendUsername();
+    void appendPronouns();
 
     void runIgnoreReplaces(std::vector<TwitchEmoteOccurence> &twitchEmotes);
 

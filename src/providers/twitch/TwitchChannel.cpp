@@ -792,11 +792,59 @@ void TwitchChannel::refreshChatters()
                 if (pair.first)
                 {
                     this->setChatters(std::move(pair.second));
+                    this->refreshPronouns();
                 }
 
                 return pair.first;
             })
         .execute();
+}
+
+void TwitchChannel::refreshPronouns()
+{
+    auto chatters = this->accessChatters();
+    static constexpr const char *alejoPonounsApiUrl =
+        "https://pronouns.alejo.io/api/users/";
+
+    // Fetch pronouns for each chatter
+    for (const auto &chatter : *chatters)
+    {
+        NetworkRequest(QString(alejoPonounsApiUrl) + chatter)
+            .timeout(3000)
+            .onSuccess([this, chatter,
+                        weak = weakOf<Channel>(this)](auto result) -> Outcome {
+                auto res = result.parseJsonArray();
+
+                // qDebug() << result.parseJson().value("pronound_id").toString();
+
+                auto shared = weak.lock();
+                if (!shared)
+                {
+                    return Failure;
+                }
+
+                static_assert(std::is_same<decltype(res), QJsonArray>::value);
+
+                if (!res.isEmpty())
+                {
+                    auto val = res.at(0);
+                    auto obj = val.toObject();
+
+                    auto pronounId = obj[QString("pronoun_id")].toString();
+
+                    if (pronounId.isEmpty())
+                    {
+                        // qDebug() << "No pronouns found";
+                    }
+                    else
+                    {
+                        this->setUserPronouns(chatter, pronounId);
+                    }
+                }
+                return Success;
+            })
+            .execute();
+    }
 }
 
 void TwitchChannel::fetchDisplayName()

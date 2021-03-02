@@ -25,6 +25,8 @@ void ChannelChatters::addJoinedUser(const QString &user)
     auto joinedUsers = this->joinedUsers_.access();
     joinedUsers->append(user);
 
+    qDebug() << "joined user: " << user;
+
     if (!this->joinedUsersMergeQueued_)
     {
         this->joinedUsersMergeQueued_ = true;
@@ -88,6 +90,27 @@ void ChannelChatters::setUserColor(const QString &user, const QColor &color)
 {
     const auto chatterColors = this->chatterColors_.access();
     chatterColors->insert_or_assign(user.toLower(), color);
+}
+
+const QString ChannelChatters::getUserPronouns(const QString &user)
+{
+    const auto chatterPronouns = this->chatterPronouns_.accessConst();
+
+    const auto search = chatterPronouns->find(user.toLower());
+    if (search == chatterPronouns->end())
+    {
+        // Returns empty string; no pronouns set
+        return QString();
+    }
+
+    return search->second;
+}
+
+void ChannelChatters::setUserPronouns(const QString &user,
+                                      const QString &pronouns)
+{
+    const auto chatterPronouns = this->chatterPronouns_.access();
+    chatterPronouns->insert_or_assign(user.toLower(), pronouns);
 }
 
 }  // namespace chatterino

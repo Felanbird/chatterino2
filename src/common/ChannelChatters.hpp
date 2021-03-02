@@ -20,6 +20,8 @@ public:
     void setChatters(UsernameSet &&set);
     const QColor getUserColor(const QString &user);
     void setUserColor(const QString &user, const QColor &color);
+    const QString getUserPronouns(const QString &user);
+    void setUserPronouns(const QString &user, const QString &pronouns);
 
 private:
     Channel &channel_;
@@ -27,6 +29,7 @@ private:
     // maps 2 char prefix to set of names
     UniqueAccess<UsernameSet> chatters_;
     UniqueAccess<std::map<QString, QColor>> chatterColors_;
+    UniqueAccess<std::map<QString, QString>> chatterPronouns_;
 
     // combines multiple joins/parts into one message
     UniqueAccess<QStringList> joinedUsers_;

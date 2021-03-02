@@ -136,6 +136,7 @@ private:
     void parseLiveStatus(bool live, const HelixStream &stream);
     void refreshPubsub();
     void refreshChatters();
+    void refreshPronouns();
     void refreshBadges();
     void refreshCheerEmotes();
     void loadRecentMessages();

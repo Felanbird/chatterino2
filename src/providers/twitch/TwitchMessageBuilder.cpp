@@ -263,6 +263,7 @@ MessagePtr TwitchMessageBuilder::build()
     this->appendChatterinoBadges();
     this->appendFfzBadges();
 
+    this->appendPronouns();
     this->appendUsername();
 
     //    QString bits;
@@ -620,6 +621,7 @@ void TwitchMessageBuilder::parseUsername()
 
 void TwitchMessageBuilder::appendUsername()
 {
+    // here gabe
     auto app = getApp();
 
     QString username = this->userName;
@@ -734,6 +736,44 @@ void TwitchMessageBuilder::appendUsername()
                                    FontStyle::ChatMediumBold)
             ->setLink({Link::UserInfo, this->message().displayName});
     }
+}
+
+void TwitchMessageBuilder::appendPronouns()
+{
+    const static QHash<QString, QString> pronounTable = {
+        {"hehim", "He/Him"},       {"sheher", "She/Her"},
+        {"hethem", "He/They"},     {"shethem", "She/They"},
+        {"theythem", "They/Them"}, {"any", "Any"},
+        {"other", "Other"},        {"itits", "It/Its"},
+        {"aeaer", "Ae/Aer"},       {"eem", "E/Em"},
+        {"faefaer", "Fae/Faer"},   {"perper", "Per/Per"},
+        {"vever", "Ve/Ver"},       {"xexem", "Xe/Xem"},
+        {"ziehir", "Zie/Hir"}};
+
+    auto pronounId = this->twitchChannel->getUserPronouns(this->userName);
+
+    if (pronounId.isEmpty())
+    {
+        // no pronouns set
+        return;
+    }
+
+    //    qDebug() << "Table val for " << this->userName << ": "
+    //             << pronounTable[pronounId];
+
+    this->emplace<TextElement>("[", MessageElementFlag::Text,
+                               MessageColor(MessageColor::Text),
+                               FontStyle::ChatMediumBold);
+
+    this->emplace<TextElement>(
+            pronounTable[pronounId], MessageElementFlag::Text,
+            MessageColor(MessageColor::Text), FontStyle::ChatMediumItalic)
+        // link to set pronouns
+        ->setLink({Link::Url, "https://pronouns.alejo.io/"});
+
+    this->emplace<TextElement>("]", MessageElementFlag::Text,
+                               MessageColor(MessageColor::Text),
+                               FontStyle::ChatMediumBold);
 }
 
 void TwitchMessageBuilder::runIgnoreReplaces(
