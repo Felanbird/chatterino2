@@ -740,19 +740,9 @@ void TwitchMessageBuilder::appendUsername()
 
 void TwitchMessageBuilder::appendPronouns()
 {
-    const static QHash<QString, QString> pronounTable = {
-        {"hehim", "He/Him"},       {"sheher", "She/Her"},
-        {"hethem", "He/They"},     {"shethem", "She/They"},
-        {"theythem", "They/Them"}, {"any", "Any"},
-        {"other", "Other"},        {"itits", "It/Its"},
-        {"aeaer", "Ae/Aer"},       {"eem", "E/Em"},
-        {"faefaer", "Fae/Faer"},   {"perper", "Per/Per"},
-        {"vever", "Ve/Ver"},       {"xexem", "Xe/Xem"},
-        {"ziehir", "Zie/Hir"}};
+    auto pronouns = this->twitchChannel->getUserPronouns(this->userName);
 
-    auto pronounId = this->twitchChannel->getUserPronouns(this->userName);
-
-    if (pronounId.isEmpty())
+    if (pronouns.isEmpty())
     {
         // no pronouns set
         return;
@@ -765,9 +755,9 @@ void TwitchMessageBuilder::appendPronouns()
                                MessageColor(MessageColor::Text),
                                FontStyle::ChatMediumBold);
 
-    this->emplace<TextElement>(
-            pronounTable[pronounId], MessageElementFlag::Text,
-            MessageColor(MessageColor::Text), FontStyle::ChatMediumItalic)
+    this->emplace<TextElement>(pronouns, MessageElementFlag::Text,
+                               MessageColor(MessageColor::Text),
+                               FontStyle::ChatMediumItalic)
         // link to set pronouns
         ->setLink({Link::Url, "https://pronouns.alejo.io/"});
 

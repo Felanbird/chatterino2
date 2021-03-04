@@ -103,7 +103,17 @@ const QString ChannelChatters::getUserPronouns(const QString &user)
         return QString();
     }
 
-    return search->second;
+    const static QHash<QString, QString> pronounTable = {
+        {"hehim", "He/Him"},       {"sheher", "She/Her"},
+        {"hethem", "He/They"},     {"shethem", "She/They"},
+        {"theythem", "They/Them"}, {"any", "Any"},
+        {"other", "Other"},        {"itits", "It/Its"},
+        {"aeaer", "Ae/Aer"},       {"eem", "E/Em"},
+        {"faefaer", "Fae/Faer"},   {"perper", "Per/Per"},
+        {"vever", "Ve/Ver"},       {"xexem", "Xe/Xem"},
+        {"ziehir", "Zie/Hir"}};
+
+    return pronounTable[search->second];
 }
 
 void ChannelChatters::setUserPronouns(const QString &user,
