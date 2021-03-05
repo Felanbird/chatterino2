@@ -526,7 +526,18 @@ void UserInfoPopup::setData(const QString &name, const ChannelPtr &channel)
     this->channel_ = channel;
     this->setWindowTitle(TEXT_TITLE.arg(name));
 
-    this->ui_.nameLabel->setText(name);
+    auto pronouns = dynamic_cast<TwitchChannel *>(this->channel_.get())
+                        ->getUserPronouns(name);
+
+    if (!pronouns.isEmpty())
+    {
+        this->ui_.nameLabel->setText(name + " (" + pronouns + ")");
+    }
+    else
+    {
+        this->ui_.nameLabel->setText(name);
+    }
+
     this->ui_.nameLabel->setProperty("copy-text", name);
 
     this->updateUserData();
@@ -580,8 +591,10 @@ void UserInfoPopup::updateUserData()
 
     std::weak_ptr<bool> hack = this->hack_;
     auto currentUser = getApp()->accounts->twitch.getCurrent();
+    auto pronouns = dynamic_cast<TwitchChannel *>(this->channel_.get())
+                        ->getUserPronouns(this->userName_);
 
-    const auto onUserFetchFailed = [this, hack] {
+    const auto onUserFetchFailed = [this, hack, pronouns] {
         if (!hack.lock())
         {
             return;
@@ -593,23 +606,39 @@ void UserInfoPopup::updateUserData()
         this->ui_.viewCountLabel->setText(TEXT_VIEWS.arg(TEXT_UNAVAILABLE));
         this->ui_.createdDateLabel->setText(TEXT_CREATED.arg(TEXT_UNAVAILABLE));
 
-        this->ui_.nameLabel->setText(this->userName_);
+        if (!pronouns.isEmpty())
+        {
+            this->ui_.nameLabel->setText(this->userName_ + " (" + pronouns +
+                                         ")");
+        }
+        else
+        {
+            this->ui_.nameLabel->setText(this->userName_);
+        }
 
         this->ui_.userIDLabel->setText(QString("ID ") +
                                        QString(TEXT_UNAVAILABLE));
         this->ui_.userIDLabel->setProperty("copy-text",
                                            QString(TEXT_UNAVAILABLE));
     };
-    const auto onUserFetched = [this, hack,
-                                currentUser](const HelixUser &user) {
+    const auto onUserFetched = [this, hack, currentUser,
+                                pronouns](const HelixUser &user) {
         if (!hack.lock())
         {
             return;
         }
 
         this->userId_ = user.id;
+        if (!pronouns.isEmpty())
+        {
+            this->ui_.nameLabel->setText(user.displayName + " (" + pronouns +
+                                         ")");
+        }
+        else
+        {
+            this->ui_.nameLabel->setText(user.displayName);
+        }
 
-        this->ui_.nameLabel->setText(user.displayName);
         this->setWindowTitle(TEXT_TITLE.arg(user.displayName));
         this->ui_.viewCountLabel->setText(TEXT_VIEWS.arg(user.viewCount));
         this->ui_.createdDateLabel->setText(

@@ -810,7 +810,8 @@ void TwitchChannel::refreshPronouns()
     for (const auto &chatter : *chatters)
     {
         NetworkRequest(QString(alejoPonounsApiUrl) + chatter)
-            .timeout(3000)
+            .cache()
+            .timeout(5000)
             .onSuccess([this, chatter,
                         weak = weakOf<Channel>(this)](auto result) -> Outcome {
                 auto res = result.parseJsonArray();
