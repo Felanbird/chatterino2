@@ -14,6 +14,7 @@
 #include "singletons/Resources.hpp"
 #include "singletons/Settings.hpp"
 #include "util/Clipboard.hpp"
+#include "util/Helpers.hpp"
 #include "util/LayoutCreator.hpp"
 #include "util/PostToThread.hpp"
 #include "util/Shortcut.hpp"
@@ -194,8 +195,6 @@ UserInfoPopup::UserInfoPopup(bool closeAutomatically, QWidget *parent)
             .assign(&this->ui_.ignoreHighlights);
         auto usercard = user.emplace<EffectLabel2>(this);
         usercard->getLabel().setText("Usercard");
-        auto refresh = user.emplace<EffectLabel2>(this);
-        refresh->getLabel().setText("Refresh");
         auto mod = user.emplace<Button>(this);
         mod->setPixmap(getResources().buttons.mod);
         mod->setScaleIndependantSize(30, 30);
@@ -217,9 +216,6 @@ UserInfoPopup::UserInfoPopup(bool closeAutomatically, QWidget *parent)
                                       "/viewercard/" + this->userName_);
         });
 
-        QObject::connect(refresh.getElement(), &Button::leftClicked, [this] {
-            this->updateLatestMessages();
-        });
         QObject::connect(mod.getElement(), &Button::leftClicked, [this] {
             this->channel_->sendMessage("/mod " + this->userName_);
         });
@@ -640,7 +636,8 @@ void UserInfoPopup::updateUserData()
         }
 
         this->setWindowTitle(TEXT_TITLE.arg(user.displayName));
-        this->ui_.viewCountLabel->setText(TEXT_VIEWS.arg(user.viewCount));
+        this->ui_.viewCountLabel->setText(
+            TEXT_VIEWS.arg(localizeNumbers(user.viewCount)));
         this->ui_.createdDateLabel->setText(
             TEXT_CREATED.arg(user.createdAt.section("T", 0, 0)));
         this->ui_.userIDLabel->setText(TEXT_USER_ID + user.id);
@@ -664,7 +661,7 @@ void UserInfoPopup::updateUserData()
                     return;
                 }
                 this->ui_.followerCountLabel->setText(
-                    TEXT_FOLLOWERS.arg(followers.total));
+                    TEXT_FOLLOWERS.arg(localizeNumbers(followers.total)));
             },
             [] {
                 // on failure

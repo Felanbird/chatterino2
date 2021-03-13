@@ -3,6 +3,9 @@
 #include "common/Channel.hpp"
 #include "common/UniqueAccess.hpp"
 #include "common/UsernameSet.hpp"
+#include "util/QStringHash.hpp"
+
+#include "lrucache/lrucache.hpp"
 
 namespace chatterino {
 
@@ -24,11 +27,13 @@ public:
     void setUserPronouns(const QString &user, const QString &pronouns);
 
 private:
+    static constexpr int maxChatterColorCount = 5000;
+
     Channel &channel_;
 
     // maps 2 char prefix to set of names
     UniqueAccess<UsernameSet> chatters_;
-    UniqueAccess<std::map<QString, QColor>> chatterColors_;
+    UniqueAccess<cache::lru_cache<QString, QRgb>> chatterColors_;
     UniqueAccess<std::map<QString, QString>> chatterPronouns_;
 
     // combines multiple joins/parts into one message

@@ -30,7 +30,7 @@
 - Minor: Added an option to only open channels specified in command line with `-c` parameter. You can also use `--help` to display short help message (#1940, #2368)
 - Minor: Added customizable timeout buttons to the user info popup
 - Minor: Deprecate loading of "v1" window layouts. If you haven't updated Chatterino in more than 2 years, there's a chance you will lose your window layout.
-- Minor: User popup will now automatically display messages as they are received
+- Minor: User popup will now automatically display messages as they are received. (#1982, #2514)
 - Minor: Changed the English in two rate-limited system messages (#1878)
 - Minor: Added a setting to disable messages sent to /mentions split from making the tab highlight with the red marker (#1994)
 - Minor: Added image for streamer mode in the user popup icon.
@@ -54,7 +54,8 @@
 - Minor: Added human-readable formatting to remaining timeout duration. (#2398)
 - Minor: Update emojis version to 13 (2020). (#1555)
 - Minor: Remove EmojiOne 2 and 3 due to license restrictions. (#1555)
-- Minor: Added `/streamlink` command. Usage: `/streamlink <channel>`. You can also use the command without arguments in any twitch channel to open it in streamlink. (#2443)
+- Minor: Added `/streamlink` command. Usage: `/streamlink <channel>`. You can also use the command without arguments in any twitch channel to open it in streamlink. (#2443, #2495)
+- Minor: Humanized all numbers visible to end-users. (#2488)
 - Bugfix: Fix crash occurring when pressing Escape in the Color Picker Dialog (#1843)
 - Bugfix: Fix bug where the "check user follow state" event could trigger a network request requesting the user to follow or unfollow a user. By itself its quite harmless as it just repeats to Twitch the same follow state we had, so no follows should have been lost by this but it meant there was a rogue network request that was fired that could cause a crash (#1906)
 - Bugfix: /usercard command will now respect the "Automatically close user popup" setting (#1918)
@@ -77,6 +78,7 @@
 - Bugfix: Fix anonymous users being pinged by "username" justinfan64537 (#2156, #2352)
 - Bugfix: Fixed hidden tooltips when always on top is active (#2384)
 - Bugfix: Fix CLI arguments (`--help`, `--version`, `--channels`) not being respected (#2368, #2190)
+- Bugfix: Fix Twitch cheer emotes not displaying tooltips when hovered (#2434)
 - Dev: Updated minimum required Qt framework version to 5.12. (#2210)
 - Dev: Migrated `Kraken::getUser` to Helix (#2260)
 - Dev: Migrated `TwitchAccount::(un)followUser` from Kraken to Helix and moved it to `Helix::(un)followUser`. (#2306)
