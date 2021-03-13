@@ -129,8 +129,11 @@ public:
     BoolSetting showBadgesVanity = {"/appearance/badges/vanity", true};
     BoolSetting showBadgesChatterino = {"/appearance/badges/chatterino", true};
     BoolSetting showBadgesFfz = {"/appearance/badges/ffz", true};
+    BoolSetting showBadgesPronouns = {"/appearance/bades/pronouns", false};
 
     /// Behaviour
+
+    BoolSetting showPronounsInUserInfo = {"/behaviour/showPronounsInUserInfo"};
     BoolSetting allowDuplicateMessages = {"/behaviour/allowDuplicateMessages",
                                           true};
     BoolSetting mentionUsersWithAt = {"/behaviour/mentionUsersWithAt", false};

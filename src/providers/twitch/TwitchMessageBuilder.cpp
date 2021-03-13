@@ -740,6 +740,9 @@ void TwitchMessageBuilder::appendUsername()
 
 void TwitchMessageBuilder::appendPronouns()
 {
+    if (!getSettings()->showBadgesPronouns)
+        return;
+
     auto pronouns = this->twitchChannel->getUserPronouns(this->userName);
 
     if (pronouns.isEmpty())

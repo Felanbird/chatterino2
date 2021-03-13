@@ -792,7 +792,10 @@ void TwitchChannel::refreshChatters()
                 if (pair.first)
                 {
                     this->setChatters(std::move(pair.second));
-                    this->refreshPronouns();
+
+                    if (getSettings()->showBadgesPronouns ||
+                        getSettings()->showPronounsInUserInfo)
+                        this->refreshPronouns();
                 }
 
                 return pair.first;

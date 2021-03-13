@@ -529,7 +529,7 @@ void UserInfoPopup::setData(const QString &name, const ChannelPtr &channel)
     auto pronouns = dynamic_cast<TwitchChannel *>(this->channel_.get())
                         ->getUserPronouns(name);
 
-    if (!pronouns.isEmpty())
+    if (!pronouns.isEmpty() && getSettings()->showPronounsInUserInfo)
     {
         this->ui_.nameLabel->setText(name + " (" + pronouns + ")");
     }
@@ -606,7 +606,7 @@ void UserInfoPopup::updateUserData()
         this->ui_.viewCountLabel->setText(TEXT_VIEWS.arg(TEXT_UNAVAILABLE));
         this->ui_.createdDateLabel->setText(TEXT_CREATED.arg(TEXT_UNAVAILABLE));
 
-        if (!pronouns.isEmpty())
+        if (!pronouns.isEmpty() && getSettings()->showPronounsInUserInfo)
         {
             this->ui_.nameLabel->setText(this->userName_ + " (" + pronouns +
                                          ")");
@@ -629,7 +629,7 @@ void UserInfoPopup::updateUserData()
         }
 
         this->userId_ = user.id;
-        if (!pronouns.isEmpty())
+        if (!pronouns.isEmpty() && getSettings()->showPronounsInUserInfo)
         {
             this->ui_.nameLabel->setText(user.displayName + " (" + pronouns +
                                          ")");

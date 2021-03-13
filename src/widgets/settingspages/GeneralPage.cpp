@@ -548,8 +548,13 @@ void GeneralPage::initLayout(GeneralPageView &layout)
     layout.addCheckbox("Chatterino", getSettings()->showBadgesChatterino);
     layout.addCheckbox("FrankerFaceZ (Bot, FFZ Supporter, FFZ Developer)",
                        getSettings()->showBadgesFfz);
+    layout.addCheckbox("Pronouns (Alejo_47's Extension)",
+                       getSettings()->showBadgesPronouns);
 
     layout.addSubtitle("Miscellaneous");
+
+    layout.addCheckbox("Show pronouns in user info popup",
+                       s.showPronounsInUserInfo);
 
     if (supportsIncognitoLinks())
     {
@@ -567,7 +572,6 @@ void GeneralPage::initLayout(GeneralPageView &layout)
             s.useKeyring);
     }
 #endif
-
     layout.addCheckbox("Show moderation messages", s.hideModerationActions,
                        true);
     layout.addCheckbox("Colorize users without color set (gray names)",
