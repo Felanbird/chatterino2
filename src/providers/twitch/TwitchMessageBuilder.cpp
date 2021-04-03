@@ -754,17 +754,17 @@ void TwitchMessageBuilder::appendPronouns()
     //    qDebug() << "Table val for " << this->userName << ": "
     //             << pronounTable[pronounId];
 
-    this->emplace<TextElement>("[", MessageElementFlag::Text,
+    this->emplace<TextElement>("[", MessageElementFlag::Badges,
                                MessageColor(MessageColor::Text),
                                FontStyle::ChatMediumBold);
 
-    this->emplace<TextElement>(pronouns, MessageElementFlag::Text,
+    this->emplace<TextElement>(pronouns, MessageElementFlag::Badges,
                                MessageColor(MessageColor::Text),
                                FontStyle::ChatMediumItalic)
         // link to set pronouns
         ->setLink({Link::Url, "https://pronouns.alejo.io/"});
 
-    this->emplace<TextElement>("]", MessageElementFlag::Text,
+    this->emplace<TextElement>("]", MessageElementFlag::Badges,
                                MessageColor(MessageColor::Text),
                                FontStyle::ChatMediumBold);
 }
