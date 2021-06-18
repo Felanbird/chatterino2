@@ -861,12 +861,12 @@ void TwitchChannel::refreshChatters()
 
 void TwitchChannel::refreshPronouns()
 {
-    auto chatters = this->accessChatters();
+    auto chatters = this->accessChatters()->filterByPrefix(QString());
     static constexpr const char *alejoPonounsApiUrl =
         "https://pronouns.alejo.io/api/users/";
 
     // Fetch pronouns for each chatter
-    for (const auto &chatter : *chatters)
+    for (const auto &chatter : chatters)
     {
         NetworkRequest(QString(alejoPonounsApiUrl) + chatter)
             .cache()
