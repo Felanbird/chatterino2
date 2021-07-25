@@ -280,8 +280,6 @@ set(SOURCE_FILES
         util/IncognitoBrowser.hpp
         util/InitUpdateButton.cpp
         util/InitUpdateButton.hpp
-        util/JsonQuery.cpp
-        util/JsonQuery.hpp
         util/LayoutHelper.cpp
         util/LayoutHelper.hpp
         util/NuulsUploader.cpp
@@ -437,10 +435,10 @@ set(SOURCE_FILES
 
         widgets/splits/ClosedSplits.cpp
         widgets/splits/ClosedSplits.hpp
-        widgets/splits/EmoteInputItem.cpp
-        widgets/splits/EmoteInputItem.hpp
-        widgets/splits/EmoteInputPopup.cpp
-        widgets/splits/EmoteInputPopup.hpp
+        widgets/splits/InputCompletionItem.cpp
+        widgets/splits/InputCompletionItem.hpp
+        widgets/splits/InputCompletionPopup.cpp
+        widgets/splits/InputCompletionPopup.hpp
         widgets/splits/Split.cpp
         widgets/splits/Split.hpp
         widgets/splits/SplitContainer.cpp

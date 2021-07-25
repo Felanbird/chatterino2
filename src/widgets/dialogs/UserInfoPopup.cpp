@@ -6,13 +6,14 @@
 #include "controllers/accounts/AccountController.hpp"
 #include "controllers/highlights/HighlightBlacklistUser.hpp"
 #include "messages/Message.hpp"
+#include "messages/MessageBuilder.hpp"
 #include "providers/IvrApi.hpp"
-#include "providers/irc/IrcMessageBuilder.hpp"
 #include "providers/twitch/TwitchChannel.hpp"
 #include "providers/twitch/api/Helix.hpp"
 #include "providers/twitch/api/Kraken.hpp"
 #include "singletons/Resources.hpp"
 #include "singletons/Settings.hpp"
+#include "singletons/Theme.hpp"
 #include "util/Clipboard.hpp"
 #include "util/Helpers.hpp"
 #include "util/LayoutCreator.hpp"
@@ -42,7 +43,7 @@ namespace {
     {
         auto label = box.emplace<Label>();
         auto button = box.emplace<Button>();
-        button->setPixmap(getResources().buttons.copyDark);
+        button->setPixmap(getApp()->themes->buttons.copy);
         button->setScaleIndependantSize(18, 18);
         button->setDim(Button::Dim::Lots);
         QObject::connect(
