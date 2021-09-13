@@ -27,9 +27,13 @@ public:
     const QString getUserPronouns(const QString &user);
     void setUserPronouns(const QString &user, const QString &pronouns);
 
-private:
+    // colorsSize returns the amount of colors stored in `chatterColors_`
+    // NOTE: This function is only meant to be used in tests and benchmarks
+    size_t colorsSize() const;
+
     static constexpr int maxChatterColorCount = 5000;
 
+private:
     Channel &channel_;
 
     // maps 2 char prefix to set of names
