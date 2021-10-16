@@ -4,7 +4,7 @@ name: Build
 on:
   push:
     branches:
-      - master
+      - feature/pronouns
   pull_request:
 
 jobs:
@@ -238,7 +238,7 @@ jobs:
   create-release:
     needs: build
     runs-on: ubuntu-latest
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/master')
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/feature/pronouns')
 
     steps:
       - name: Create release
