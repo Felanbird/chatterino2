@@ -21,6 +21,7 @@
 #define LINK_DONATE "https://streamelements.com/fourtf/tip"
 #define LINK_CHATTERINO_FEATURES "https://chatterino.com/#features"
 #define LINK_CHATTERINO_DISCORD "https://discord.gg/7Y5AYhAK4z"
+#define LINK_TESTMAN_123 "https://www.youtube.com/watch?v=1bIANjAm-so"
 
 namespace chatterino {
 
@@ -111,6 +112,8 @@ AboutPage::AboutPage()
             l.emplace<QLabel>("Chatterino Wiki can be found <a href=\"" LINK_CHATTERINO_WIKI "\">here</a>")->setOpenExternalLinks(true);
             l.emplace<QLabel>("All about Chatterino's <a href=\"" LINK_CHATTERINO_FEATURES "\">features</a>")->setOpenExternalLinks(true);
             l.emplace<QLabel>("Join the official Chatterino <a href=\"" LINK_CHATTERINO_DISCORD "\">Discord</a>")->setOpenExternalLinks(true);
+            l.emplace<QLabel>("testman123<a href=\"" LINK_TESTMAN_123 "\">testman124</a>")->setOpenExternalLinks(true);
+
             // clang-format on
         }
 
