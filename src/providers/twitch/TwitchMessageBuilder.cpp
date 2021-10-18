@@ -180,6 +180,12 @@ MessagePtr TwitchMessageBuilder::build()
         this->message().flags.set(MessageFlag::RedeemedHighlight);
     }
 
+    if (this->tags.contains("first-msg") &&
+        this->tags["first-msg"].toString() == "1")
+    {
+        this->message().flags.set(MessageFlag::FirstMessage);
+    }
+
     // timestamp
     this->emplace<TimestampElement>(
         calculateMessageTimestamp(this->ircMessage));
@@ -206,7 +212,7 @@ MessagePtr TwitchMessageBuilder::build()
         this->bits = iterator.value().toString();
     }
 
-    // twitch emotes
+    // Twitch emotes
     std::vector<TwitchEmoteOccurence> twitchEmotes;
 
     iterator = this->tags.find("emotes");
@@ -1392,7 +1398,7 @@ void TwitchMessageBuilder::hostingSystemMessage(const QString &channelName,
     builder->message().searchText = text;
 }
 
-// irc variant
+// IRC variant
 void TwitchMessageBuilder::deletionMessage(const MessagePtr originalMessage,
                                            MessageBuilder *builder)
 {
