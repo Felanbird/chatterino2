@@ -108,7 +108,11 @@ namespace {
                                 });
         };
 
-        if (creatorFlags.has(MessageElementFlag::BttvEmote))
+        if (creatorFlags.has(MessageElementFlag::SeventvEmote))
+        {
+            addPageLink("7TV");
+        }
+        else if (creatorFlags.has(MessageElementFlag::BttvEmote))
         {
             addPageLink("BTTV");
         }
@@ -1927,7 +1931,7 @@ void ChannelView::addContextMenuItems(
         crossPlatformCopy(copyString);
     });
 
-    // If is a link to a twitch user/stream
+    // If is a link to a Twitch user/stream
     if (hoveredElement->getLink().type == Link::Url)
     {
         static QRegularExpression twitchChannelRegex(

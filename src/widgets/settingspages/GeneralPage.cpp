@@ -434,14 +434,14 @@ void GeneralPage::initLayout(GeneralPageView &layout)
     {
         layout.addDescription(
             "Your operating system is not officially supplied with builds. For "
-            "updates, please rebuild chatterino from sources. Report "
+            "updates, please rebuild Chatterino from sources. Report "
             "issues <a href='https://chatterino.com/link/issues'>here</a>.");
     }
 
 #ifdef Q_OS_WIN
     layout.addTitle("Browser Integration");
     layout.addDescription("The browser extension replaces the default "
-                          "Twitch.tv chat with chatterino.");
+                          "Twitch.tv chat with Chatterino.");
 
     {
         if (auto err = nmIpcError().get())
@@ -568,6 +568,7 @@ void GeneralPage::initLayout(GeneralPageView &layout)
     layout.addCheckbox("Subscriber ", s.showBadgesSubscription);
     layout.addCheckbox("Vanity (prime, bits, subgifter)", s.showBadgesVanity);
     layout.addCheckbox("Chatterino", s.showBadgesChatterino);
+    layout.addCheckbox("SevenTV", s.showBadgesSeventv);
     layout.addCheckbox("FrankerFaceZ (Bot, FFZ Supporter, FFZ Developer)",
                        s.showBadgesFfz);
     layout.addSeperator();
@@ -655,7 +656,7 @@ void GeneralPage::initLayout(GeneralPageView &layout)
     layout.addCheckbox("Only search for username autocompletion with an @",
                        s.userCompletionOnlyWithAt);
 
-    layout.addCheckbox("Show twitch whispers inline", s.inlineWhispers);
+    layout.addCheckbox("Show Twitch whispers inline", s.inlineWhispers);
     layout.addCheckbox("Highlight received inline whispers",
                        s.highlightInlineWhispers);
     layout.addCheckbox("Load message history on connect",

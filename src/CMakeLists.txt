@@ -149,6 +149,8 @@ set(SOURCE_FILES
         messages/search/LinkPredicate.hpp
         messages/search/MessageFlagsPredicate.cpp
         messages/search/MessageFlagsPredicate.hpp
+        messages/search/RegexPredicate.cpp
+        messages/search/RegexPredicate.hpp
         messages/search/SubstringPredicate.cpp
         messages/search/SubstringPredicate.hpp
 
@@ -156,6 +158,11 @@ set(SOURCE_FILES
         providers/IvrApi.hpp
         providers/LinkResolver.cpp
         providers/LinkResolver.hpp
+
+        providers/seventv/SeventvBadges.cpp
+        providers/seventv/SeventvBadges.hpp
+        providers/seventv/SeventvEmotes.cpp
+        providers/seventv/SeventvEmotes.hpp
 
         providers/bttv/BttvEmotes.cpp
         providers/bttv/BttvEmotes.hpp
