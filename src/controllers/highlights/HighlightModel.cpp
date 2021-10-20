@@ -160,7 +160,9 @@ void HighlightModel::afterInit()
                                               Qt::DisplayRole);
     firstMessageRow[Column::ShowInMentions]->setFlags({});
     firstMessageRow[Column::FlashTaskbar]->setFlags({});
-    firstMessageRow[Column::PlaySound]->setFlags({});
+    setBoolItem(firstMessageRow[Column::PlaySound],
+                getSettings()->enableFirstMessageHighlightSound.getValue(),
+                true, false);
     firstMessageRow[Column::UseRegex]->setFlags({});
     firstMessageRow[Column::CaseSensitive]->setFlags({});
 
@@ -271,6 +273,11 @@ void HighlightModel::customRowSetData(const std::vector<QStandardItem *> &row,
                     // getSettings()->enableRedeemedHighlightSound.setValue(
                     //     value.toBool());
                 }
+                else if (rowIndex == 4)
+                {
+                    getSettings()->enableFirstMessageHighlightSound.setValue(
+                        value.toBool());
+                }
             }
         }
         break;
@@ -306,6 +313,9 @@ void HighlightModel::customRowSetData(const std::vector<QStandardItem *> &row,
                     getSettings()->redeemedHighlightSoundUrl.setValue(
                         value.toString());
                 }
+                else if (rowIndex == 4)
+                    getSettings()->firstMessageHighlightSoundUrl.setValue(
+                        value.toString());
             }
         }
         break;

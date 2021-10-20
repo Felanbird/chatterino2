@@ -130,6 +130,7 @@ void SharedMessageBuilder::parseHighlights()
 {
     auto app = getApp();
 
+    // Highlight because it's a subscription
     if (this->message().flags.has(MessageFlag::Subscription) &&
         getSettings()->enableSubHighlight)
     {
@@ -203,6 +204,28 @@ void SharedMessageBuilder::parseHighlights()
          */
     }
 
+    // Highlight because it's a first message
+    if (this->message().flags.has(MessageFlag::FirstMessage) &&
+        getSettings()->enableFirstMessageHighlight)
+    {
+        if (getSettings()->enableFirstMessageHighlightSound)
+        {
+            this->highlightSound_ = true;
+
+            // Use custom sound if set, otherwise use fallback
+            if (!getSettings()
+                     ->firstMessageHighlightSoundUrl.getValue()
+                     .isEmpty())
+            {
+                this->highlightSoundUrl_ = QUrl(
+                    getSettings()->firstMessageHighlightSoundUrl.getValue());
+            }
+            else
+            {
+                this->highlightSoundUrl_ = getFallbackHighlightSound();
+            }
+        }
+    }
     // Highlight because of sender
     auto userHighlights = getCSettings().highlightedUsers.readOnly();
     for (const HighlightPhrase &userHighlight : *userHighlights)

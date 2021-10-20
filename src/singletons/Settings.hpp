@@ -275,6 +275,8 @@ public:
 
     BoolSetting enableFirstMessageHighlight = {
         "/highlighting/firstMessageHighlight/highlighted", true};
+    BoolSetting enableFirstMessageHighlightSound = {
+        "/highlighting/firstMessageHighlight/enableSound", true};
     QStringSetting firstMessageHighlightSoundUrl = {
         "/highlighting/firstMessageHighlightSoundUrl", ""};
     QStringSetting firstMessageHighlightColor = {
