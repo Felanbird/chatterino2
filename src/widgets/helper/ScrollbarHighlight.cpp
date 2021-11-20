@@ -14,11 +14,13 @@ ScrollbarHighlight::ScrollbarHighlight()
 
 ScrollbarHighlight::ScrollbarHighlight(const std::shared_ptr<QColor> color,
                                        Style style, bool isRedeemedHighlight,
-                                       bool isFirstMessageHighlight)
+                                       bool isFirstMessageHighlight,
+                                       bool isChatterinoMessageHighlight)
     : color_(color)
     , style_(style)
     , isRedeemedHighlight_(isRedeemedHighlight)
     , isFirstMessageHighlight_(isFirstMessageHighlight)
+    , isChatterinoMessageHighlight_(isChatterinoMessageHighlight)
 {
 }
 
@@ -40,6 +42,11 @@ bool ScrollbarHighlight::isRedeemedHighlight() const
 bool ScrollbarHighlight::isFirstMessageHighlight() const
 {
     return this->isFirstMessageHighlight_;
+}
+
+bool ScrollbarHighlight::isChatterinoMessageHighlight() const
+{
+    return this->isChatterinoMessageHighlight_;
 }
 
 bool ScrollbarHighlight::isNull() const

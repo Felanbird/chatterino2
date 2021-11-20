@@ -133,6 +133,19 @@ void ColorProvider::initTypeColorMap()
              std::make_shared<QColor>(
                  HighlightPhrase::FALLBACK_FIRST_MESSAGE_HIGHLIGHT_COLOR)});
     }
+
+    customColor = getSettings()->chatterinoMessageHighlightColor;
+    if (QColor(customColor).isValid())
+    {
+        this->typeColorMap_.insert({ColorType::ChatterinoMessageHighlight,
+                                    std::make_shared<QColor>(customColor)});
+    }
+    else
+        this->typeColorMap_.insert(
+            {ColorType::ChatterinoMessageHighlight,
+             std::make_shared<QColor>(
+                 HighlightPhrase::
+                     FALLBACK_CHATTERINO_MESSAGE_HIGHLIGHT_COLOR)});
 }
 
 void ColorProvider::initDefaultColors()

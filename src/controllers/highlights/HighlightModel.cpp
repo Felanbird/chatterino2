@@ -174,6 +174,31 @@ void HighlightModel::afterInit()
     setColorItem(firstMessageRow[Column::Color], *FirstMessageColor, false);
 
     this->insertCustomRow(firstMessageRow, 4);
+
+    // Highlight settings for chatterino messages
+    std::vector<QStandardItem *> chatterinoMessageRow = this->createRow();
+    setBoolItem(chatterinoMessageRow[Column::Pattern],
+                getSettings()->enableChatterinoMessageHighlight.getValue(),
+                true, false);
+    chatterinoMessageRow[Column::Pattern]->setData("Chatterino Messages",
+                                                   Qt::DisplayRole);
+    chatterinoMessageRow[Column::ShowInMentions]->setFlags({});
+    chatterinoMessageRow[Column::FlashTaskbar]->setFlags({});
+    chatterinoMessageRow[Column::PlaySound]->setFlags({});
+    chatterinoMessageRow[Column::UseRegex]->setFlags({});
+    chatterinoMessageRow[Column::CaseSensitive]->setFlags({});
+
+    QUrl ChatterinoMessageSound =
+        QUrl(getSettings()->chatterinoMessageHighlightSoundUrl.getValue());
+    setFilePathItem(chatterinoMessageRow[Column::SoundPath],
+                    ChatterinoMessageSound, false);
+
+    auto ChatterinoMessageColor =
+        ColorProvider::instance().color(ColorType::ChatterinoMessageHighlight);
+    setColorItem(chatterinoMessageRow[Column::Color], *ChatterinoMessageColor,
+                 false);
+
+    this->insertCustomRow(chatterinoMessageRow, 5);
 }
 
 void HighlightModel::customRowSetData(const std::vector<QStandardItem *> &row,
@@ -206,6 +231,11 @@ void HighlightModel::customRowSetData(const std::vector<QStandardItem *> &row,
                 else if (rowIndex == 4)
                 {
                     getSettings()->enableFirstMessageHighlight.setValue(
+                        value.toBool());
+                }
+                else if (rowIndex == 5)
+                {
+                    getSettings()->enableChatterinoMessageHighlight.setValue(
                         value.toBool());
                 }
             }
@@ -311,6 +341,11 @@ void HighlightModel::customRowSetData(const std::vector<QStandardItem *> &row,
                     getSettings()->firstMessageHighlightSoundUrl.setValue(
                         value.toString());
                 }
+                else if (rowIndex == 5)
+                {
+                    getSettings()->chatterinoMessageHighlightSoundUrl.setValue(
+                        value.toString());
+                }
             }
         }
         break;
@@ -344,6 +379,14 @@ void HighlightModel::customRowSetData(const std::vector<QStandardItem *> &row,
                         colorName);
                     const_cast<ColorProvider &>(ColorProvider::instance())
                         .updateColor(ColorType::FirstMessageHighlight,
+                                     QColor(colorName));
+                }
+                else if (rowIndex == 5)
+                {
+                    getSettings()->chatterinoMessageHighlightColor.setValue(
+                        colorName);
+                    const_cast<ColorProvider &>(ColorProvider::instance())
+                        .updateColor(ColorType::ChatterinoMessageHighlight,
                                      QColor(colorName));
                 }
             }

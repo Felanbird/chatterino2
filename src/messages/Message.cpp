@@ -48,6 +48,12 @@ SBHighlight Message::getScrollBarHighlight() const
             ColorProvider::instance().color(ColorType::FirstMessageHighlight),
             SBHighlight::Default, false, true);
     }
+    else if (this->flags.has(MessageFlag::ChatterinoMessage))
+    {
+        return SBHighlight(ColorProvider::instance().color(
+                               ColorType::ChatterinoMessageHighlight),
+                           SBHighlight::Default, false, true);
+    }
     return SBHighlight();
 }
 

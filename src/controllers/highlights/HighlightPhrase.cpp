@@ -14,6 +14,8 @@ QColor HighlightPhrase::FALLBACK_REDEEMED_HIGHLIGHT_COLOR =
     QColor(28, 126, 141, 60);
 QColor HighlightPhrase::FALLBACK_FIRST_MESSAGE_HIGHLIGHT_COLOR =
     QColor(72, 127, 63, 60);
+QColor HighlightPhrase::FALLBACK_CHATTERINO_MESSAGE_HIGHLIGHT_COLOR =
+    QColor(225, 118, 25, 1);
 QColor HighlightPhrase::FALLBACK_SUB_COLOR = QColor(196, 102, 255, 100);
 
 bool HighlightPhrase::operator==(const HighlightPhrase &other) const

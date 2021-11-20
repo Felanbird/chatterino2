@@ -186,6 +186,12 @@ MessagePtr TwitchMessageBuilder::build()
         this->message().flags.set(MessageFlag::FirstMessage);
     }
 
+    // [felanbird] client-nonce checker for Chatterino users (personal use)
+    if (this->tags.contains("client-nonce"))
+    {
+        this->message().flags.set(MessageFlag::ChatterinoMessage);
+    }
+
     // timestamp
     this->emplace<TimestampElement>(
         calculateMessageTimestamp(this->ircMessage));

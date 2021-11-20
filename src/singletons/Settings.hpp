@@ -280,6 +280,17 @@ public:
     QStringSetting firstMessageHighlightColor = {
         "/highlighting/firstMessageHighlightColor", ""};
 
+    BoolSetting enableChatterinoMessageHighlight = {
+        "/highlighting/chatterinoMessageHighlight/highlighted", true};
+    //    BoolSetting enableChatterinoMessageHighlightSound = {
+    //        "/highlighting/chatterinoHighlight/enableSound", false};
+    //    BoolSetting enableChatterinoMessageHighlightTaskbar = {
+    //        "/highlighting/chatterinoHighlight/enableTaskbarFlashing", false};
+    QStringSetting chatterinoMessageHighlightSoundUrl = {
+        "/highlighting/chatterinoMessageHighlightSoundUrl", ""};
+    QStringSetting chatterinoMessageHighlightColor = {
+        "/highlighting/chatterinoMessageHighlightColor", ""};
+
     BoolSetting enableSubHighlight = {
         "/highlighting/subHighlight/subsHighlighted", true};
     BoolSetting enableSubHighlightSound = {
