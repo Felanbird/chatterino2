@@ -187,7 +187,7 @@ MessagePtr TwitchMessageBuilder::build()
     }
 
     // [felanbird] client-nonce checker for Chatterino users (personal use)
-    if (this->tags.contains("client-nonce"))
+    if (!this->tags.contains("client-nonce"))
     {
         this->message().flags.set(MessageFlag::ChatterinoMessage);
     }
