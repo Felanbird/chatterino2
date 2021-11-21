@@ -222,8 +222,8 @@ void Window::addDebugStuff()
     // "first time chat" message
     miscMessages.emplace_back(R"(@badge-info=;badges=glhf-pledge/1;client-nonce=5d2627b0cbe56fa05faf5420def4807d;color=#1E90FF;display-name=oldcoeur;emote-only=1;emotes=84608:0-7;first-msg=1;flags=;id=7412fea4-8683-4cc9-a506-4228127a5c2d;mod=0;room-id=11148817;subscriber=0;tmi-sent-ts=1623429859222;turbo=0;user-id=139147886;user-type= :oldcoeur!oldcoeur@oldcoeur.tmi.twitch.tv PRIVMSG #pajlada :cmonBruh)");
 
-    // "chatterino" message (message missing client-nonce tag)
-    linkMessages.emplace_back(R"(@badge-info=subscriber/20;badges=subscriber/12,glhf-pledge/1;color=#666666;display-name=Felanbird;emotes=;first-msg=0;flags=;id=19bfc55d-28da-41df-ac64-9fb2f53ced5b;mod=0;room-id=11148817;subscriber=1;tmi-sent-ts=1637435674845;turbo=0;user-id=22524109;user-type= :felanbird!felanbird@felanbird.tmi.twitch.tv PRIVMSG #pajlada :ah yes)");
+    // "chatterino" message
+    miscMessages.emplace_back(R"(@badge-info=subscriber/20;badges=subscriber/12,glhf-pledge/1;client-nonce=f00a298a912db02544575f01e1645cff;color=#666666;display-name=Felanbird;emote-only=1;emotes=80481:0-4;first-msg=0;flags=;id=cfa67274-0d45-4af5-b3c0-698d10eb0991;mod=0;room-id=11148817;subscriber=1;tmi-sent-ts=1637523971363;turbo=0;user-id=22524109;user-type= :felanbird!felanbird@felanbird.tmi.twitch.tv PRIVMSG #pajlada :pajaW)");
 
     // various link tests
     linkMessages.emplace_back(R"(@badge-info=subscriber/48;badges=broadcaster/1,subscriber/36,partner/1;color=#CC44FF;display-name=pajlada;emotes=;flags=;id=3c23cf3c-0864-4699-a76b-089350141147;mod=0;room-id=11148817;subscriber=1;tmi-sent-ts=1577628844607;turbo=0;user-id=11148817;user-type= :pajlada!pajlada@pajlada.tmi.twitch.tv PRIVMSG #pajlada : Links that should pass: )" + getValidLinks().join(' '));
