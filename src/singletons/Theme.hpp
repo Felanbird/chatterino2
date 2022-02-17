@@ -31,9 +31,7 @@ public:
 
         struct {
             QColor border;
-            QColor focusedBorder;
             QColor background;
-            QColor focusedBackground;
             QColor text;
             QColor focusedText;
             // int margin;
