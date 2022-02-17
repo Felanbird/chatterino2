@@ -4,7 +4,7 @@ name: Build
 on:
   push:
     branches:
-      - master
+      - waste/ci-hours
   pull_request:
 
 jobs:
@@ -236,7 +236,7 @@ jobs:
   create-release:
     needs: build
     runs-on: ubuntu-latest
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/master')
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/waste/ci-hours')
 
     steps:
       - name: Create release
@@ -245,11 +245,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: nightly-build
-          backup_tag_name: backup-nightly-build
+          tag_name: nightly-build-personal
           release_name: Nightly Release
           body: |
-              Nightly Build
+              Nightly Build but with my own reverts b/c i'm not ready for them yet
           prerelease: true
 
       - uses: actions/download-artifact@v2.1.0
