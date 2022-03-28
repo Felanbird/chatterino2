@@ -68,7 +68,7 @@ jobs:
               libxcb-render-util0 \
               libxcb-xinerama0
       - name: Build (Ubuntu)
-        if: matrix.build-system == 'qmake' && ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
+        if: (matrix.build-system == 'qmake') && ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         run: |
           mkdir build
           cd build
@@ -77,7 +77,7 @@ jobs:
         shell: bash
 
       - name: Build with CMake (Ubuntu)
-        if: matrix.build-system == 'cmake' && ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
+        if: (matrix.build-system == 'cmake') && ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         run: |
           mkdir build
           cd build

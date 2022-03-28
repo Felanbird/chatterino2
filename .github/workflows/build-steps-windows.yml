@@ -70,7 +70,7 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1.10.0
 
       - name: Build (Windows)
-        if: matrix.build-system == 'qmake' && ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
+        if: (matrix.build-system == 'qmake') && ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         run: |
           mkdir build
           cd build
@@ -84,7 +84,7 @@ jobs:
           7z a chatterino-windows-x86-64.zip Chatterino2/
 
       - name: Build with CMake (Windows)
-        if: matrix.build-system == 'cmake' && ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
+        if: (matrix.build-system == 'cmake') && ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         run: |
           mkdir build
           cd build
@@ -96,6 +96,7 @@ jobs:
           cp bin/chatterino.exe Chatterino2/
           echo nightly > Chatterino2/modes
           7z a chatterino-windows-x86-64.zip Chatterino2/
+
       - name: Upload artifact (Windows)
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         uses: actions/upload-artifact@v3
