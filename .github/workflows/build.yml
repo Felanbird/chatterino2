@@ -29,6 +29,8 @@ jobs:
         run: |
             echo "vs_version=2022" >> $GITHUB_ENV
         shell: bash
+        with:
+            skipLabels: 'skip build'
 
       - uses: actions/checkout@v3
         with:
@@ -244,7 +246,7 @@ jobs:
           name: chatterino-osx-${{ matrix.qt-version }}-${{ matrix.build-system }}.dmg
           path: build/chatterino-osx.dmg
 
-    skipLabels: 'skip build'
+
   create-release:
     needs: build
     runs-on: ubuntu-latest
