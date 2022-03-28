@@ -15,12 +15,13 @@ jobs:
 
     steps:
       - name: Set environment variables for windows-latest
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'windows-latest' && ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         run: |
           echo "vs_version=2022" >> $GITHUB_ENV
         shell: bash
 
       - uses: actions/checkout@v3
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         with:
           submodules: true
           fetch-depth: 0  # allows for tags access
@@ -28,12 +29,14 @@ jobs:
       - name: Cache Qt
         id: cache-qt
         uses: actions/cache@v3
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         with:
           path: "${{ github.workspace }}/qt/"
           key: ${{ runner.os }}-QtCache-${{ matrix.qt-version }}
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         with:
           cached: ${{ steps.cache-qt.outputs.cache-hit }}
           version: ${{ matrix.qt-version }}
@@ -41,28 +44,33 @@ jobs:
 
       - name: Cache conan packages part 1
         uses: actions/cache@v3
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         with:
           key: ${{ runner.os }}-conan-user-${{ hashFiles('**/conanfile.txt') }}
           path:  ~/.conan/
 
       - name: Cache conan packages part 2
         uses: actions/cache@v3
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         with:
           key: ${{ runner.os }}-conan-root-${{ hashFiles('**/conanfile.txt') }}
           path: C:/.conan/
 
       - name: Add Conan to path
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         run: echo "C:\Program Files\Conan\conan\" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       - name: Install dependencies (Windows)
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         run: |
           choco install conan -y
 
       - name: Enable Developer Command Prompt
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         uses: ilammy/msvc-dev-cmd@v1.10.0
 
       - name: Build (Windows)
-        if: matrix.build-system == 'qmake'
+        if: matrix.build-system == 'qmake' && ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         run: |
           mkdir build
           cd build
@@ -76,7 +84,7 @@ jobs:
           7z a chatterino-windows-x86-64.zip Chatterino2/
 
       - name: Build with CMake (Windows)
-        if: matrix.build-system == 'cmake'
+        if: matrix.build-system == 'cmake' && ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         run: |
           mkdir build
           cd build
@@ -89,11 +97,13 @@ jobs:
           echo nightly > Chatterino2/modes
           7z a chatterino-windows-x86-64.zip Chatterino2/
       - name: Upload artifact (Windows)
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         uses: actions/upload-artifact@v3
         with:
           name: chatterino-windows-x86-64-${{ matrix.qt-version }}-${{ matrix.build-system }}.zip
           path: build/chatterino-windows-x86-64.zip
 
       - name: Clean Conan pkgs
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         run: conan remove "*" -fsb
         shell: bash
