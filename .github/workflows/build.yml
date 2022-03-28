@@ -9,7 +9,6 @@ on:
 
 jobs:
   build:
-    skipLabels: 'skip build'
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -35,6 +34,7 @@ jobs:
         with:
           submodules: true
           fetch-depth: 0  # allows for tags access
+          skipLabels: 'skip build'
 
       - name: Cache Qt
         id: cache-qt
