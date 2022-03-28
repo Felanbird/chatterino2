@@ -15,12 +15,11 @@ jobs:
 
     steps:
       - name: Set environment variables for windows-latest
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip build') }}
         if: matrix.os == 'windows-latest'
         run: |
           echo "vs_version=2022" >> $GITHUB_ENV
         shell: bash
-        with:
-          skipLabels: 'skip build'
 
       - uses: actions/checkout@v3
         with:
