@@ -15,6 +15,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         with:
           submodules: true
           fetch-depth: 0  # allows for tags access
@@ -22,24 +23,27 @@ jobs:
       - name: Cache Qt
         id: cache-qt
         uses: actions/cache@v3
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         with:
           path: "${{ github.workspace }}/qt/"
           key: ${{ runner.os }}-QtCache-${{ matrix.qt-version }}
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         with:
           cached: ${{ steps.cache-qt.outputs.cache-hit }}
           version: ${{ matrix.qt-version }}
           dir: "${{ github.workspace }}/qt/"
 
       - name: Install dependencies (MacOS)
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         run: |
           brew install boost openssl rapidjson p7zip create-dmg cmake tree
         shell: bash
 
       - name: Build (MacOS)
-        if: matrix.build-system == 'qmake'
+        if: matrix.build-system == 'qmake' && ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         run: |
           mkdir build
           cd build
@@ -48,7 +52,7 @@ jobs:
         shell: bash
 
       - name: Build with CMake (MacOS)
-        if: matrix.build-system == 'cmake'
+        if: matrix.build-system == 'cmake' && ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         run: |
           mkdir build
           cd build
@@ -61,6 +65,7 @@ jobs:
         shell: bash
 
       - name: Package (MacOS)
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         run: |
           ls -la
           pwd
@@ -71,6 +76,7 @@ jobs:
 
       - name: Upload artifact (MacOS)
         uses: actions/upload-artifact@v3
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         with:
           name: chatterino-osx-${{ matrix.qt-version }}-${{ matrix.build-system }}.dmg
           path: build/chatterino-osx.dmg

@@ -19,6 +19,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2.4.0
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         with:
           submodules: true
           fetch-depth: 0  # allows for tags access
@@ -26,21 +27,25 @@ jobs:
       - name: Cache Qt
         id: cache-qt
         uses: actions/cache@v2.1.7
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         with:
           path: ../Qt
           key: ubuntu-latest-QtCache-${{ matrix.qt-version }}-20210109
 
       - name: Install p7zip (Ubuntu)
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         run: sudo apt-get update && sudo apt-get -y install p7zip-full
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         with:
           cached: ${{ steps.cache-qt.outputs.cache-hit }}
           version: ${{ matrix.qt-version }}
           dir: "${{ github.workspace }}/qt/"
 
       - name: Install dependencies (Ubuntu)
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         run: |
           sudo apt-get update
           sudo apt-get -y install \
@@ -63,7 +68,7 @@ jobs:
               libxcb-render-util0 \
               libxcb-xinerama0
       - name: Build (Ubuntu)
-        if: matrix.build-system == 'qmake'
+        if: matrix.build-system == 'qmake' && ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         run: |
           mkdir build
           cd build
@@ -72,7 +77,7 @@ jobs:
         shell: bash
 
       - name: Build with CMake (Ubuntu)
-        if: matrix.build-system == 'cmake'
+        if: matrix.build-system == 'cmake' && ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         run: |
           mkdir build
           cd build
@@ -86,12 +91,14 @@ jobs:
         shell: bash
 
       - name: Package - AppImage (Ubuntu)
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         run: |
           cd build
           sh ./../.CI/CreateAppImage.sh
         shell: bash
 
       - name: Package - .deb (Ubuntu)
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         run: |
           cd build
           sh ./../.CI/CreateUbuntuDeb.sh
@@ -99,6 +106,7 @@ jobs:
 
       - name: Upload artifact - AppImage (Ubuntu)
         uses: actions/upload-artifact@v3
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
         with:
           name: Chatterino-x86_64-${{ matrix.qt-version }}-${{ matrix.build-system }}.AppImage
           path: build/Chatterino-x86_64.AppImage
