@@ -22,6 +22,7 @@ jobs:
             build-system: cmake
             pch: false
       fail-fast: false
+    skipLabels: 'skip build'
 
     steps:
       - name: Set environment variables for windows-latest
