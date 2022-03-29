@@ -67,6 +67,7 @@ jobs:
               libxcb-keysyms1 \
               libxcb-render-util0 \
               libxcb-xinerama0
+              
       - name: Build (Ubuntu)
         if: (matrix.build-system == 'qmake') & (${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }})
         run: |
