@@ -34,29 +34,21 @@ Notebook::Notebook(QWidget *parent)
 
     this->addButton_->setHidden(true);
 
-    this->menu_.addAction(
-        "Toggle visibility of tabs",
-        [this]() {
-            this->setShowTabs(!this->getShowTabs());
-        },
-        QKeySequence("Ctrl+U"));
-
-    lockNotebookLayoutAction_ = new QAction("Lock Tab Layout", &this->menu_);
+    this->lockNotebookLayoutAction_ = new QAction("Lock Tab Layout", this);
 
     // Load lock notebook layout state from settings
     this->setLockNotebookLayout(getSettings()->lockNotebookLayout.getValue());
 
-    lockNotebookLayoutAction_->setCheckable(true);
-    lockNotebookLayoutAction_->setChecked(this->lockNotebookLayout_);
+    this->lockNotebookLayoutAction_->setCheckable(true);
+    this->lockNotebookLayoutAction_->setChecked(this->lockNotebookLayout_);
 
     // Update lockNotebookLayout_ value anytime the user changes the checkbox state
-    QObject::connect(lockNotebookLayoutAction_, &QAction::triggered,
+    QObject::connect(this->lockNotebookLayoutAction_, &QAction::triggered,
                      [this](bool value) {
-                         this->lockNotebookLayout_ = value;
+                         this->setLockNotebookLayout(value);
                      });
 
-    // Append it to our current menu actions
-    this->menu_.addAction(lockNotebookLayoutAction_);
+    this->addNotebookActionsToMenu(&this->menu_);
 }
 
 NotebookTab *Notebook::addPage(QWidget *page, QString title, bool select)
@@ -705,6 +697,18 @@ void Notebook::setLockNotebookLayout(bool value)
     this->lockNotebookLayout_ = value;
     this->lockNotebookLayoutAction_->setChecked(value);
     getSettings()->lockNotebookLayout.setValue(value);
+}
+
+void Notebook::addNotebookActionsToMenu(QMenu *menu)
+{
+    menu->addAction(
+        "Toggle visibility of tabs",
+        [this]() {
+            this->setShowTabs(!this->getShowTabs());
+        },
+        QKeySequence("Ctrl+U"));
+
+    menu->addAction(this->lockNotebookLayoutAction_);
 }
 
 NotebookButton *Notebook::getAddButton()
