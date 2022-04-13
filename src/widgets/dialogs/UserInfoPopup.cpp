@@ -806,15 +806,6 @@ void UserInfoPopup::updateUserData()
         }
 
         this->userId_ = user.id;
-        if (!pronouns.isEmpty() && getSettings()->showPronounsInUserInfo)
-        {
-            this->ui_.nameLabel->setText(user.displayName + " (" + pronouns +
-                                         ")");
-        }
-        else
-        {
-            this->ui_.nameLabel->setText(user.displayName);
-        }
 
         // copyable button for login name of users with a localized username
         if (user.displayName.toLower() != user.login)
@@ -827,7 +818,15 @@ void UserInfoPopup::updateUserData()
         }
         else
         {
-            this->ui_.nameLabel->setText(user.displayName);
+            if (!pronouns.isEmpty() && getSettings()->showPronounsInUserInfo)
+            {
+                this->ui_.nameLabel->setText(user.displayName + " (" +
+                                             pronouns + ")");
+            }
+            else
+            {
+                this->ui_.nameLabel->setText(user.displayName);
+            }
             this->ui_.nameLabel->setProperty("copy-text", user.displayName);
         }
 
