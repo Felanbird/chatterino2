@@ -79,6 +79,8 @@ namespace {
 
         QApplication::setStyle(QStyleFactory::create("Fusion"));
 
+        QApplication::setWindowIcon(QIcon(":/icon.ico"));
+
         installCustomPalette();
     }
 
@@ -140,7 +142,7 @@ namespace {
                 CFStringGetCStringPtr(macPath, CFStringGetSystemEncoding());
 
             proc.setProgram("open");
-            proc.setArguments({pathPtr, "--args", "--crash-recovery"});
+            proc.setArguments({pathPtr, "-n", "--args", "--crash-recovery"});
 
             CFRelease(appUrlRef);
             CFRelease(macPath);

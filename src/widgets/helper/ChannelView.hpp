@@ -96,7 +96,15 @@ public:
     void queueLayout();
 
     void clearMessages();
-    void showUserInfoPopup(const QString &userName);
+
+    /**
+     * @brief Creates and shows a UserInfoPopup dialog
+     *
+     * @param userName The login name of the user
+     * @param alternativePopoutChannel Optional parameter containing the channel name to use for context
+     **/
+    void showUserInfoPopup(const QString &userName,
+                           QString alternativePopoutChannel = QString());
 
     pajlada::Signals::Signal<QMouseEvent *> mouseDown;
     pajlada::Signals::NoArgSignal selectionChanged;
@@ -157,10 +165,25 @@ private:
                        const QPoint &relativePos, int &wordStart, int &wordEnd);
 
     void handleMouseClick(QMouseEvent *event,
-                          const MessageLayoutElement *hoverLayoutElement,
+                          const MessageLayoutElement *hoveredElement,
                           MessageLayoutPtr layout);
     void addContextMenuItems(const MessageLayoutElement *hoveredElement,
-                             MessageLayoutPtr layout);
+                             MessageLayoutPtr layout, QMouseEvent *event);
+    void addImageContextMenuItems(const MessageLayoutElement *hoveredElement,
+                                  MessageLayoutPtr layout, QMouseEvent *event,
+                                  QMenu &menu);
+    void addLinkContextMenuItems(const MessageLayoutElement *hoveredElement,
+                                 MessageLayoutPtr layout, QMouseEvent *event,
+                                 QMenu &menu);
+    void addMessageContextMenuItems(const MessageLayoutElement *hoveredElement,
+                                    MessageLayoutPtr layout, QMouseEvent *event,
+                                    QMenu &menu);
+    void addTwitchLinkContextMenuItems(
+        const MessageLayoutElement *hoveredElement, MessageLayoutPtr layout,
+        QMouseEvent *event, QMenu &menu);
+    void addHiddenContextMenuItems(const MessageLayoutElement *hoveredElement,
+                                   MessageLayoutPtr layout, QMouseEvent *event,
+                                   QMenu &menu);
     int getLayoutWidth() const;
     void updatePauses();
     void unpaused();
@@ -238,8 +261,10 @@ private:
 
     LimitedQueue<MessageLayoutPtr> messages_;
 
-    std::vector<pajlada::Signals::ScopedConnection> connections_;
-    std::vector<pajlada::Signals::ScopedConnection> channelConnections_;
+    pajlada::Signals::SignalHolder signalHolder_;
+
+    // channelConnections_ will be cleared when the underlying channel of the channelview changes
+    pajlada::Signals::SignalHolder channelConnections_;
 
     std::unordered_set<std::shared_ptr<MessageLayout>> messagesOnScreen_;
 
