@@ -27,6 +27,7 @@ class Settings;
 class Fonts;
 class Toasts;
 class ChatterinoBadges;
+class SeventvBadges;
 class FfzBadges;
 
 class Application
@@ -60,6 +61,7 @@ public:
     NotificationController *const notifications{};
     TwitchIrcServer *const twitch{};
     ChatterinoBadges *const chatterinoBadges{};
+    SeventvBadges *const seventvBadges{};
     FfzBadges *const ffzBadges{};
 
     /*[[deprecated]]*/ Logging *const logging{};
