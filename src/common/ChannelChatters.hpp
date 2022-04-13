@@ -23,7 +23,7 @@ public:
     void addPartedUser(const QString &user);
     const QColor getUserColor(const QString &user);
     void setUserColor(const QString &user, const QColor &color);
-    void updateOnlineChatters(const std::unordered_set<QString> &chatters);
+    void updateOnlineChatters(const std::unordered_set<QString> &usernames);
     const QString getUserPronouns(const QString &user);
     void setUserPronouns(const QString &user, const QString &pronouns);
 

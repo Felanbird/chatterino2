@@ -98,8 +98,8 @@ public:
         "/appearance/messages/usernameDisplayMode",
         UsernameDisplayMode::UsernameAndLocalizedName};
 
-    IntSetting tabDirection = {"/appearance/tabDirection",
-                               NotebookTabDirection::Horizontal};
+    EnumSetting<NotebookTabDirection> tabDirection = {
+        "/appearance/tabDirection", NotebookTabDirection::Horizontal};
 
     //    BoolSetting collapseLongMessages =
     //    {"/appearance/messages/collapseLongMessages", false};
@@ -195,6 +195,7 @@ public:
     BoolSetting enableEmoteImages = {"/emotes/enableEmoteImages", true};
     BoolSetting animateEmotes = {"/emotes/enableGifAnimations", true};
     FloatSetting emoteScale = {"/emotes/scale", 1.f};
+    BoolSetting showUnlistedEmotes = {"/emotes/showUnlistedEmotes", false};
 
     QStringSetting emojiSet = {"/emotes/emojiSet", "Twitter"};
 
@@ -279,6 +280,10 @@ public:
 
     BoolSetting enableFirstMessageHighlight = {
         "/highlighting/firstMessageHighlight/highlighted", true};
+    //    BoolSetting enableFirstMessageHighlightSound = {
+    //        "/highlighting/firstMessageHighlight/enableSound", false};
+    //    BoolSetting enableFirstMessageHighlightTaskbar = {
+    //        "/highlighting/firstMessageHighlight/enableTaskbarFlashing", false};
     QStringSetting firstMessageHighlightSoundUrl = {
         "/highlighting/firstMessageHighlightSoundUrl", ""};
     QStringSetting firstMessageHighlightColor = {
@@ -375,6 +380,8 @@ public:
         "/misc/twitch/messageHistoryLimit",
         800,
     };
+    BoolSetting displaySevenTVAnimatedProfile = {
+        "/misc/displaySevenTVAnimatedProfile", true};
 
     IntSetting emotesTooltipPreview = {"/misc/emotesTooltipPreview", 1};
     BoolSetting openLinksIncognito = {"/misc/openLinksIncognito", 0};
@@ -386,6 +393,7 @@ public:
     BoolSetting askOnImageUpload = {"/misc/askOnImageUpload", true};
     BoolSetting informOnTabVisibilityToggle = {"/misc/askOnTabVisibilityToggle",
                                                true};
+    BoolSetting lockNotebookLayout = {"/misc/lockNotebookLayout", false};
 
     /// Debug
     BoolSetting showUnhandledIrcMessages = {"/debug/showUnhandledIrcMessages",

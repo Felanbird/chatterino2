@@ -15,6 +15,7 @@ class PubSub;
 class CommandController;
 class AccountController;
 class NotificationController;
+class HotkeyController;
 
 class Theme;
 class WindowManager;
@@ -52,23 +53,18 @@ public:
     Fonts *const fonts{};
     Emotes *const emotes{};
     AccountController *const accounts{};
+    HotkeyController *const hotkeys{};
     WindowManager *const windows{};
     Toasts *const toasts{};
 
     CommandController *const commands{};
     NotificationController *const notifications{};
-    TwitchIrcServer *const twitch2{};
+    TwitchIrcServer *const twitch{};
     ChatterinoBadges *const chatterinoBadges{};
     SeventvBadges *const seventvBadges{};
     FfzBadges *const ffzBadges{};
 
     /*[[deprecated]]*/ Logging *const logging{};
-
-    /// Provider-specific
-    struct {
-        /*[[deprecated("use twitch2 instead")]]*/ TwitchIrcServer *server{};
-        /*[[deprecated("use twitch2->pubsub instead")]]*/ PubSub *pubsub{};
-    } twitch;
 
 private:
     void addSingleton(Singleton *singleton);

@@ -6,6 +6,8 @@
 
 #include "Application.hpp"
 #include "common/Version.hpp"
+#include "providers/twitch/TwitchChannel.hpp"
+#include "providers/twitch/TwitchIrcServer.hpp"
 #include "singletons/Fonts.hpp"
 #include "singletons/NativeMessaging.hpp"
 #include "singletons/Paths.hpp"
@@ -144,30 +146,34 @@ void GeneralPage::initLayout(GeneralPageView &layout)
         [](auto args) {
             return fuzzyToFloat(args.value, 1.f);
         });
-    layout.addDropdown<int>(
-        "Tab layout", {"Horizontal", "Vertical"}, s.tabDirection,
-        [](auto val) {
-            switch (val)
-            {
-                case NotebookTabDirection::Horizontal:
-                    return "Horizontal";
-                case NotebookTabDirection::Vertical:
-                    return "Vertical";
-            }
+    ComboBox *tabDirectionDropdown =
+        layout.addDropdown<std::underlying_type<NotebookTabDirection>::type>(
+            "Tab layout", {"Horizontal", "Vertical"}, s.tabDirection,
+            [](auto val) {
+                switch (val)
+                {
+                    case NotebookTabDirection::Horizontal:
+                        return "Horizontal";
+                    case NotebookTabDirection::Vertical:
+                        return "Vertical";
+                }
 
-            return "";
-        },
-        [](auto args) {
-            if (args.value == "Vertical")
-            {
-                return NotebookTabDirection::Vertical;
-            }
-            else
-            {
-                // default to horizontal
-                return NotebookTabDirection::Horizontal;
-            }
-        });
+                return "";
+            },
+            [](auto args) {
+                if (args.value == "Vertical")
+                {
+                    return NotebookTabDirection::Vertical;
+                }
+                else
+                {
+                    // default to horizontal
+                    return NotebookTabDirection::Horizontal;
+                }
+            },
+            false);
+    tabDirectionDropdown->setMinimumWidth(
+        tabDirectionDropdown->minimumSizeHint().width());
 
     layout.addCheckbox("Show tab close button", s.showTabCloseButton);
     layout.addCheckbox("Always on top", s.windowTopMost);
@@ -231,8 +237,6 @@ void GeneralPage::initLayout(GeneralPageView &layout)
     layout.addCheckbox("Separate with lines", s.separateMessages);
     layout.addCheckbox("Alternate background color", s.alternateMessages);
     layout.addCheckbox("Show deleted messages", s.hideModerated, true);
-    layout.addCheckbox("Highlight messages redeemed with Channel Points",
-                       s.enableRedeemedHighlight);
     layout.addDropdown<QString>(
         "Timestamp format (a = am/pm, zzz = milliseconds)",
         {"Disable", "h:mm", "hh:mm", "h:mm a", "hh:mm a", "h:mm:ss", "hh:mm:ss",
@@ -299,7 +303,7 @@ void GeneralPage::initLayout(GeneralPageView &layout)
     layout.addCheckbox("Enable emote auto-completion by typing :",
                        s.emoteCompletionWithColon);
     layout.addDropdown<float>(
-        "Size", {"0.5x", "0.75x", "Default", "1.25x", "1.5x", "2x"},
+        "Size", {"0.5x", "0.75x", "Default", "1.25x", "1.5x", "2x", "3x", "4x"},
         s.emoteScale,
         [](auto val) {
             if (val == 1)
@@ -313,6 +317,23 @@ void GeneralPage::initLayout(GeneralPageView &layout)
 
     layout.addCheckbox("Remove spaces between emotes",
                        s.removeSpacesBetweenEmotes);
+    layout.addCheckbox("Show unlisted / unapproved emotes (7TV only)",
+                       s.showUnlistedEmotes);
+    s.showUnlistedEmotes.connect(
+        []() {
+            getApp()->twitch->forEachChannelAndSpecialChannels(
+                [](const auto &c) {
+                    if (c->isTwitchChannel())
+                    {
+                        auto channel = dynamic_cast<TwitchChannel *>(c.get());
+                        if (channel != nullptr)
+                        {
+                            channel->refresh7TVChannelEmotes(false);
+                        }
+                    }
+                });
+        },
+        false);
     layout.addDropdown<int>(
         "Show info on hover", {"Don't show", "Always show", "Hold shift"},
         s.emotesTooltipPreview,
@@ -368,7 +389,13 @@ void GeneralPage::initLayout(GeneralPageView &layout)
         "Extra information like \"youtube video stats\" or title of webpages "
         "can be loaded for all links if enabled. Optionally you can also show "
         "thumbnails for emotes, videos and more. The information is pulled "
-        "from our servers.");
+        "from our servers. The Link Previews are loaded through <a "
+        "href=\"https://github.com/Chatterino/api\">an API</a> hosted by the "
+        "Chatterino developers. These are the API <a "
+        "href=\"https://braize.pajlada.com/chatterino/legal/"
+        "terms-of-service\">Terms of Services</a> and <a "
+        "href=\"https://braize.pajlada.com/chatterino/legal/"
+        "privacy-policy\">Privacy Policy</a>.");
     layout.addCheckbox("Enable", s.linkInfoTooltip);
     layout.addDropdown<int>(
         "Also show thumbnails if available",
@@ -505,6 +532,20 @@ void GeneralPage::initLayout(GeneralPageView &layout)
         box->addWidget(layout.makeButton("Reset", []() {
             getSettings()->cachePath = "";
         }));
+        box->addWidget(layout.makeButton("Clear Cache", [&layout]() {
+            auto reply = QMessageBox::question(
+                layout.window(), "Clear cache",
+                "Are you sure that you want to clear your cache? Emotes may "
+                "take longer to load next time Chatterino is started.",
+                QMessageBox::Yes | QMessageBox::No);
+
+            if (reply == QMessageBox::Yes)
+            {
+                auto cacheDir = QDir(getPaths()->cacheDirectory());
+                cacheDir.removeRecursively();
+                cacheDir.mkdir(getPaths()->cacheDirectory());
+            }
+        }));
         box->addStretch(1);
 
         layout.addLayout(box);
@@ -592,7 +633,7 @@ void GeneralPage::initLayout(GeneralPageView &layout)
 
     layout.addCheckbox("Restart on crash", s.restartOnCrash);
 
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) && !defined(NO_QTKEYCHAIN)
     if (!getPaths()->isPortable())
     {
         layout.addCheckbox(
@@ -600,6 +641,9 @@ void GeneralPage::initLayout(GeneralPageView &layout)
             s.useKeyring);
     }
 #endif
+
+    layout.addCheckbox("Show 7TV Animated Profile Picture",
+                       s.displaySevenTVAnimatedProfile);
     layout.addCheckbox("Show moderation messages", s.hideModerationActions,
                        true);
     layout.addCheckbox("Show deletions of single messages",

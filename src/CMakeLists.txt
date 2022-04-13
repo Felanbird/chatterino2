@@ -88,6 +88,17 @@ set(SOURCE_FILES
         controllers/highlights/UserHighlightModel.cpp
         controllers/highlights/UserHighlightModel.hpp
 
+        controllers/hotkeys/ActionNames.hpp
+        controllers/hotkeys/Hotkey.cpp
+        controllers/hotkeys/Hotkey.hpp
+        controllers/hotkeys/HotkeyCategory.hpp
+        controllers/hotkeys/HotkeyController.cpp
+        controllers/hotkeys/HotkeyController.hpp
+        controllers/hotkeys/HotkeyHelpers.cpp
+        controllers/hotkeys/HotkeyHelpers.hpp
+        controllers/hotkeys/HotkeyModel.cpp
+        controllers/hotkeys/HotkeyModel.hpp
+
         controllers/ignores/IgnoreController.cpp
         controllers/ignores/IgnoreController.hpp
         controllers/ignores/IgnoreModel.cpp
@@ -233,8 +244,6 @@ set(SOURCE_FILES
 
         providers/twitch/api/Helix.cpp
         providers/twitch/api/Helix.hpp
-        providers/twitch/api/Kraken.cpp
-        providers/twitch/api/Kraken.hpp
 
         singletons/Badges.cpp
         singletons/Badges.hpp
@@ -340,6 +349,8 @@ set(SOURCE_FILES
         widgets/dialogs/ChannelFilterEditorDialog.hpp
         widgets/dialogs/ColorPickerDialog.cpp
         widgets/dialogs/ColorPickerDialog.hpp
+        widgets/dialogs/EditHotkeyDialog.cpp
+        widgets/dialogs/EditHotkeyDialog.hpp
         widgets/dialogs/EmotePopup.cpp
         widgets/dialogs/EmotePopup.hpp
         widgets/dialogs/IrcConnectionEditor.cpp
@@ -497,7 +508,6 @@ target_link_libraries(${LIBRARY_PROJECT}
         Qt${MAJOR_QT_VERSION}::Concurrent
 
         LibCommuni::LibCommuni
-        qt${MAJOR_QT_VERSION}keychain
         Pajlada::Serialize
         Pajlada::Settings
         Pajlada::Signals
@@ -506,6 +516,17 @@ target_link_libraries(${LIBRARY_PROJECT}
         RapidJSON::RapidJSON
         LRUCache
         )
+if (BUILD_WITH_QTKEYCHAIN)
+    target_link_libraries(${LIBRARY_PROJECT}
+            PUBLIC
+            qt${MAJOR_QT_VERSION}keychain
+            )
+else()
+    target_compile_definitions(${LIBRARY_PROJECT}
+        PUBLIC
+        NO_QTKEYCHAIN
+        )
+endif()
 
 if (BUILD_APP)
     add_executable(${EXECUTABLE_PROJECT} main.cpp)
@@ -561,7 +582,10 @@ if (BUILD_APP)
 endif ()
 
 if (USE_PRECOMPILED_HEADERS)
+    message(STATUS "Building with precompiled headers")
     target_precompile_headers(${LIBRARY_PROJECT} PRIVATE PrecompiledHeader.hpp)
+else ()
+    message(STATUS "Building without precompiled headers")
 endif ()
 
 # Enable autogeneration of Qts MOC/RCC/UIC
@@ -571,6 +595,12 @@ set_target_properties(${LIBRARY_PROJECT}
     AUTORCC ON
     AUTOUIC ON
     )
+
+# Used to provide a date of build in the About page (for nightly builds). Getting the actual time of
+# compilation in CMake is a more involved, as documented in https://stackoverflow.com/q/24292898.
+# For CI runs, however, the date of build file generation should be consistent with the date of
+# compilation so this approximation is "good enough" for our purpose.
+string(TIMESTAMP cmake_gen_date "%Y-%m-%d")
 
 target_compile_definitions(${LIBRARY_PROJECT} PUBLIC
     CHATTERINO
@@ -583,6 +613,8 @@ target_compile_definitions(${LIBRARY_PROJECT} PUBLIC
     CHATTERINO_GIT_HASH=\"${GIT_HASH}\"
     CHATTERINO_GIT_RELEASE=\"${GIT_RELEASE}\"
     CHATTERINO_GIT_COMMIT=\"${GIT_COMMIT}\"
+
+    CHATTERINO_CMAKE_GEN_DATE=\"${cmake_gen_date}\"
     )
 if (USE_SYSTEM_QTKEYCHAIN)
     target_compile_definitions(${LIBRARY_PROJECT} PUBLIC

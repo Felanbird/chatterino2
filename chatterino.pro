@@ -159,6 +159,10 @@ SOURCES += \
     src/controllers/highlights/HighlightModel.cpp \
     src/controllers/highlights/HighlightPhrase.cpp \
     src/controllers/highlights/UserHighlightModel.cpp \
+    src/controllers/hotkeys/Hotkey.cpp \
+    src/controllers/hotkeys/HotkeyController.cpp \
+    src/controllers/hotkeys/HotkeyHelpers.cpp \
+    src/controllers/hotkeys/HotkeyModel.cpp \
     src/controllers/ignores/IgnoreController.cpp \
     src/controllers/ignores/IgnoreModel.cpp \
     src/controllers/moderationactions/ModerationAction.cpp \
@@ -209,7 +213,6 @@ SOURCES += \
     src/providers/seventv/SeventvEmotes.cpp \
     src/providers/seventv/SeventvWebSocket.cpp \
     src/providers/twitch/api/Helix.cpp \
-    src/providers/twitch/api/Kraken.cpp \
     src/providers/twitch/ChannelPointReward.cpp \
     src/providers/twitch/IrcMessageHandler.cpp \
     src/providers/twitch/PubsubActions.cpp \
@@ -269,6 +272,7 @@ SOURCES += \
     src/widgets/dialogs/BadgePickerDialog.cpp \
     src/widgets/dialogs/ChannelFilterEditorDialog.cpp \
     src/widgets/dialogs/ColorPickerDialog.cpp \
+    src/widgets/dialogs/EditHotkeyDialog.cpp \
     src/widgets/dialogs/EmotePopup.cpp \
     src/widgets/dialogs/IrcConnectionEditor.cpp \
     src/widgets/dialogs/LastRunCrashDialog.cpp \
@@ -392,6 +396,12 @@ HEADERS += \
     src/controllers/highlights/HighlightModel.hpp \
     src/controllers/highlights/HighlightPhrase.hpp \
     src/controllers/highlights/UserHighlightModel.hpp \
+    src/controllers/hotkeys/ActionNames.hpp \
+    src/controllers/hotkeys/Hotkey.hpp \
+    src/controllers/hotkeys/HotkeyCategory.hpp \
+    src/controllers/hotkeys/HotkeyController.hpp \
+    src/controllers/hotkeys/HotkeyHelpers.hpp \
+    src/controllers/hotkeys/HotkeyModel.hpp \
     src/controllers/ignores/IgnoreController.hpp \
     src/controllers/ignores/IgnoreModel.hpp \
     src/controllers/ignores/IgnorePhrase.hpp \
@@ -450,7 +460,6 @@ HEADERS += \
     src/providers/seventv/SeventvEmotes.hpp \
     src/providers/seventv/SeventvWebSocket.hpp \
     src/providers/twitch/api/Helix.hpp \
-    src/providers/twitch/api/Kraken.hpp \
     src/providers/twitch/ChannelPointReward.hpp \
     src/providers/twitch/ChatterinoWebSocketppLogger.hpp \
     src/providers/twitch/EmoteValue.hpp \
@@ -518,7 +527,6 @@ HEADERS += \
     src/util/SampleCheerMessages.hpp \
     src/util/SampleLinks.hpp \
     src/util/SharedPtrElementLess.hpp \
-    src/util/Shortcut.hpp \
     src/util/SplitCommand.hpp \
     src/util/StandardItemHelper.hpp \
     src/util/StreamerMode.hpp \
@@ -534,6 +542,7 @@ HEADERS += \
     src/widgets/dialogs/BadgePickerDialog.hpp \
     src/widgets/dialogs/ChannelFilterEditorDialog.hpp \
     src/widgets/dialogs/ColorPickerDialog.hpp \
+    src/widgets/dialogs/EditHotkeyDialog.hpp \
     src/widgets/dialogs/EmotePopup.hpp \
     src/widgets/dialogs/IrcConnectionEditor.hpp \
     src/widgets/dialogs/LastRunCrashDialog.hpp \
@@ -610,7 +619,8 @@ RESOURCES += \
 DISTFILES +=
 
 FORMS += \
-    src/widgets/dialogs/IrcConnectionEditor.ui
+    src/widgets/dialogs/IrcConnectionEditor.ui \
+    src/widgets/dialogs/EditHotkeyDialog.ui  
 
 # do not use windows min/max macros
 #win32 {
