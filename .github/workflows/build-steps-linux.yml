@@ -1,0 +1,120 @@
+---
+name: Build on Linux
+
+on:
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        qt-version: [5.15.2, 5.12.10]
+        build-system: [qmake, cmake]
+        pch: [true]
+        include:
+          - qt-version: 5.15.2
+            build-system: cmake
+            pch: false
+
+    steps:
+      - uses: actions/checkout@v2.4.0
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
+        with:
+          submodules: true
+          fetch-depth: 0  # allows for tags access
+
+      - name: Cache Qt
+        id: cache-qt
+        uses: actions/cache@v2.1.7
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
+        with:
+          path: ../Qt
+          key: ubuntu-latest-QtCache-${{ matrix.qt-version }}-20210109
+
+      - name: Install p7zip (Ubuntu)
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
+        run: sudo apt-get update && sudo apt-get -y install p7zip-full
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
+        with:
+          cached: ${{ steps.cache-qt.outputs.cache-hit }}
+          version: ${{ matrix.qt-version }}
+          dir: "${{ github.workspace }}/qt/"
+
+      - name: Install dependencies (Ubuntu)
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install \
+              cmake \
+              virtualenv \
+              rapidjson-dev \
+              libssl-dev \
+              libboost-dev \
+              libxcb-randr0-dev \
+              libboost-system-dev \
+              libboost-filesystem-dev \
+              libpulse-dev \
+              libxkbcommon-x11-0 \
+              libgstreamer-plugins-base1.0-0 \
+              build-essential \
+              libgl1-mesa-dev \
+              libxcb-icccm4 \
+              libxcb-image0 \
+              libxcb-keysyms1 \
+              libxcb-render-util0 \
+              libxcb-xinerama0
+              
+      - name: Build (Ubuntu)
+        if: (matrix.build-system == 'qmake') & (${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }})
+        run: |
+          mkdir build
+          cd build
+          qmake PREFIX=/usr ..
+          make -j$(nproc)
+        shell: bash
+
+      - name: Build with CMake (Ubuntu)
+        if: (matrix.build-system == 'cmake') & (${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }})
+        run: |
+          mkdir build
+          cd build
+          cmake \
+            -DCMAKE_INSTALL_PREFIX=appdir/usr/ \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DPAJLADA_SETTINGS_USE_BOOST_FILESYSTEM=On \
+            -DUSE_PRECOMPILED_HEADERS=${{ matrix.pch }} \
+            ..
+          make -j$(nproc)
+        shell: bash
+
+      - name: Package - AppImage (Ubuntu)
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
+        run: |
+          cd build
+          sh ./../.CI/CreateAppImage.sh
+        shell: bash
+
+      - name: Package - .deb (Ubuntu)
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
+        run: |
+          cd build
+          sh ./../.CI/CreateUbuntuDeb.sh
+        shell: bash
+
+      - name: Upload artifact - AppImage (Ubuntu)
+        uses: actions/upload-artifact@v3
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'asd123') }}
+        with:
+          name: Chatterino-x86_64-${{ matrix.qt-version }}-${{ matrix.build-system }}.AppImage
+          path: build/Chatterino-x86_64.AppImage
+
+      - name: Upload artifact - .deb (Ubuntu)
+        uses: actions/upload-artifact@v3
+        with:
+          name: Chatterino-${{ matrix.qt-version }}-${{ matrix.build-system }}.deb
+          path: build/Chatterino.deb
+
