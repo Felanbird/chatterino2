@@ -2,6 +2,7 @@
 
 #include "common/FlagsEnum.hpp"
 #include "providers/twitch/TwitchBadge.hpp"
+#include "util/QStringHash.hpp"
 #include "widgets/helper/ScrollbarHighlight.hpp"
 
 #include <QTime>
@@ -39,6 +40,9 @@ enum class MessageFlag : uint32_t {
     RedeemedChannelPointReward = (1 << 21),
     ShowInMentions = (1 << 22),
     FirstMessage = (1 << 23),
+    SevenTvEventApiAddEmoteMessage = (1 << 24),
+    SevenTvEventApiRemoveEmoteMessage = (1 << 25),
+    SevenTvEventApiUpdateEmoteMessage = (1 << 26),
 };
 using MessageFlags = FlagsEnum<MessageFlag>;
 
@@ -63,11 +67,13 @@ struct Message : boost::noncopyable {
     QString timeoutUser;
     QString channelName;
     QColor usernameColor;
+    QDateTime serverReceivedTime;
     std::vector<Badge> badges;
-    std::map<QString, QString> badgeInfos;
+    std::unordered_map<QString, QString> badgeInfos;
     std::shared_ptr<QColor> highlightColor;
     uint32_t count = 1;
     std::vector<std::unique_ptr<MessageElement>> elements;
+    std::vector<QString> seventvEventTargetEmotes;
 
     ScrollbarHighlight getScrollBarHighlight() const;
 };

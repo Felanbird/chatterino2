@@ -12,8 +12,9 @@
 #include "providers/bttv/LoadBttvChannelEmote.hpp"
 #include "providers/seventv/SeventvEmotes.hpp"
 #include "providers/twitch/IrcMessageHandler.hpp"
-#include "providers/twitch/PubsubClient.hpp"
+#include "providers/twitch/PubSubManager.hpp"
 #include "providers/twitch/TwitchCommon.hpp"
+#include "providers/twitch/TwitchIrcServer.hpp"
 #include "providers/twitch/TwitchMessageBuilder.hpp"
 #include "providers/twitch/api/Helix.hpp"
 #include "singletons/Emotes.hpp"
@@ -161,24 +162,20 @@ TwitchChannel::TwitchChannel(const QString &name)
 {
     qCDebug(chatterinoTwitch) << "[TwitchChannel" << name << "] Opened";
 
-    this->signalHolder_.managedConnect(
-        getApp()->accounts->twitch.currentUserChanged, [=] {
+    this->bSignals_.emplace_back(
+        getApp()->accounts->twitch.currentUserChanged.connect([=] {
             this->setMod(false);
-        });
+            this->refreshPubSub();
+        }));
 
-    // pubsub
-    this->signalHolder_.managedConnect(
-        getApp()->accounts->twitch.currentUserChanged, [=] {
-            this->refreshPubsub();
-        });
-    this->refreshPubsub();
+    this->refreshPubSub();
     this->userStateChanged.connect([this] {
-        this->refreshPubsub();
+        this->refreshPubSub();
     });
 
     // room id loaded -> refresh live status
     this->roomIdChanged.connect([this]() {
-        this->refreshPubsub();
+        this->refreshPubSub();
         this->refreshTitle();
         this->refreshLiveStatus();
         this->refreshBadges();
@@ -188,16 +185,18 @@ TwitchChannel::TwitchChannel(const QString &name)
         this->refreshBTTVChannelEmotes(false);
     });
 
+    this->destroyed.connect([this]() {
+        if (const auto &eventApi = getApp()->twitch->eventApi)
+        {
+            eventApi->partChannel(this->getName());
+        }
+    });
+
     // timers
     QObject::connect(&this->chattersListTimer_, &QTimer::timeout, [=] {
         this->refreshChatters();
     });
     this->chattersListTimer_.start(5 * 60 * 1000);
-
-    QObject::connect(&this->liveStatusTimer_, &QTimer::timeout, [=] {
-        this->refreshLiveStatus();
-    });
-    this->liveStatusTimer_.start(60 * 1000);
 
     // debugging
 #if 0
@@ -212,6 +211,7 @@ void TwitchChannel::initialize()
     this->fetchDisplayName();
     this->refreshChatters();
     this->refreshBadges();
+    this->listenSeventv();
 }
 
 bool TwitchChannel::isEmpty() const
@@ -296,11 +296,6 @@ void TwitchChannel::addChannelPointReward(const ChannelPointReward &reward)
 {
     assertInGuiThread();
 
-    if (!reward.hasParsedSuccessfully)
-    {
-        return;
-    }
-
     if (!reward.isUserInputRequired)
     {
         MessageBuilder builder;
@@ -310,7 +305,7 @@ void TwitchChannel::addChannelPointReward(const ChannelPointReward &reward)
         return;
     }
 
-    bool result;
+    bool result = false;
     {
         auto channelPointRewards = this->channelPointRewards_.access();
         result = channelPointRewards->try_emplace(reward.id, reward).second;
@@ -585,6 +580,51 @@ std::shared_ptr<const EmoteMap> TwitchChannel::ffzEmotes() const
     return this->ffzEmotes_.get();
 }
 
+void TwitchChannel::addSeventvEmote(const EventApiEmoteUpdate &action)
+{
+    if (!action.emote)
+    {
+        return;  // this shouldn't happen
+    }
+
+    SeventvEmotes::addEmote(this->seventvEmotes_, action.emote->json);
+    this->addOrReplaceSevenTvEventAddRemove(
+        MessageBuilder(seventvAddEmoteMessage, action.actor,
+                       {action.emote->json["name"].toString()})
+            .release());
+}
+
+void TwitchChannel::updateSeventvEmote(const EventApiEmoteUpdate &action)
+{
+    if (!action.emote)
+    {
+        return;  // this shouldn't happen
+    }
+
+    auto baseName = action.emote->baseName;
+    auto result = SeventvEmotes::updateEmote(this->seventvEmotes_, &baseName,
+                                             action.emote->json);
+    if (!result)
+    {
+        return;
+    }
+    this->addMessage(MessageBuilder(seventvUpdateEmoteMessage, action.actor,
+                                    action.emote->json["name"].toString(),
+                                    baseName)
+                         .release());
+}
+
+void TwitchChannel::removeSeventvEmote(const EventApiEmoteUpdate &action)
+{
+    if (SeventvEmotes::removeEmote(this->seventvEmotes_, action.emoteName))
+    {
+        this->addOrReplaceSevenTvEventAddRemove(
+            MessageBuilder(seventvRemoveEmoteMessage, action.actor,
+                           {action.emoteName})
+                .release());
+    }
+}
+
 const QString &TwitchChannel::subscriptionUrl()
 {
     return this->subscriptionUrl_;
@@ -752,6 +792,9 @@ void TwitchChannel::refreshLiveStatus()
         },
         [] {
             // failure
+        },
+        [] {
+            // finally
         });
 }
 
@@ -878,16 +921,21 @@ void TwitchChannel::loadRecentMessages()
         .execute();
 }
 
-void TwitchChannel::refreshPubsub()
+void TwitchChannel::refreshPubSub()
 {
     auto roomId = this->roomId();
     if (roomId.isEmpty())
+    {
         return;
+    }
 
-    auto account = getApp()->accounts->twitch.getCurrent();
-    getApp()->twitch->pubsub->listenToChannelModerationActions(roomId, account);
-    getApp()->twitch->pubsub->listenToAutomod(roomId, account);
-    getApp()->twitch->pubsub->listenToChannelPointRewards(roomId, account);
+    auto currentAccount = getApp()->accounts->twitch.getCurrent();
+
+    getApp()->twitch->pubsub->setAccount(currentAccount);
+
+    getApp()->twitch->pubsub->listenToChannelModerationActions(roomId);
+    getApp()->twitch->pubsub->listenToAutomod(roomId);
+    getApp()->twitch->pubsub->listenToChannelPointRewards(roomId);
 }
 
 void TwitchChannel::refreshChatters()
@@ -1301,6 +1349,14 @@ boost::optional<CheerEmote> TwitchChannel::cheerEmote(const QString &string)
         }
     }
     return boost::none;
+}
+
+void TwitchChannel::listenSeventv()
+{
+    if (const auto &eventApi = getApp()->twitch->eventApi)
+    {
+        eventApi->joinChannel(this->getName());
+    }
 }
 
 }  // namespace chatterino

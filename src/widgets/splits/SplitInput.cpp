@@ -40,9 +40,9 @@ SplitInput::SplitInput(Split *_chatWidget)
         new QCompleter(&this->split_->getChannel().get()->completionModel);
     this->ui_.textEdit->setCompleter(completer);
 
-    this->split_->channelChanged.connect([this] {
-        auto completer =
-            new QCompleter(&this->split_->getChannel()->completionModel);
+    this->signalHolder_.managedConnect(this->split_->channelChanged, [this] {
+        auto channel = this->split_->getChannel();
+        auto completer = new QCompleter(&channel->completionModel);
         this->ui_.textEdit->setCompleter(completer);
     });
 
@@ -133,7 +133,10 @@ void SplitInput::scaleChangedEvent(float scale)
     this->updateEmoteButton();
 
     // set maximum height
-    this->setMaximumHeight(int(150 * this->scale()));
+    if (!this->hidden)
+    {
+        this->setMaximumHeight(this->scaledMaxHeight());
+    }
     this->ui_.textEdit->setFont(
         getApp()->fonts->getFont(FontStyle::ChatMedium, this->scale()));
     this->ui_.textEditLength->setFont(
@@ -210,7 +213,13 @@ void SplitInput::openEmotePopup()
                               int(500 * this->emotePopup_->scale()));
     this->emotePopup_->loadChannel(this->split_->getChannel());
     this->emotePopup_->show();
+    this->emotePopup_->raise();
     this->emotePopup_->activateWindow();
+}
+
+int SplitInput::scaledMaxHeight() const
+{
+    return int(150 * this->scale());
 }
 
 void SplitInput::addShortcuts()
@@ -650,7 +659,8 @@ void SplitInput::insertCompletionText(const QString &input_)
         if (done)
         {
             auto cursor = edit.textCursor();
-            edit.setText(text.remove(i, position - i + 1).insert(i, input));
+            edit.setPlainText(
+                text.remove(i, position - i + 1).insert(i, input));
 
             cursor.setPosition(i + input.size());
             edit.setTextCursor(cursor);
@@ -682,6 +692,35 @@ QString SplitInput::getInputText() const
 void SplitInput::insertText(const QString &text)
 {
     this->ui_.textEdit->insertPlainText(text);
+}
+
+void SplitInput::hide()
+{
+    if (this->isHidden())
+    {
+        return;
+    }
+
+    this->hidden = true;
+    this->setMaximumHeight(0);
+    this->updateGeometry();
+}
+
+void SplitInput::show()
+{
+    if (!this->isHidden())
+    {
+        return;
+    }
+
+    this->hidden = false;
+    this->setMaximumHeight(this->scaledMaxHeight());
+    this->updateGeometry();
+}
+
+bool SplitInput::isHidden() const
+{
+    return this->hidden;
 }
 
 void SplitInput::editTextChanged()
@@ -732,7 +771,7 @@ void SplitInput::editTextChanged()
     this->ui_.textEditLength->setText(labelText);
 }
 
-void SplitInput::paintEvent(QPaintEvent *)
+void SplitInput::paintEvent(QPaintEvent * /*event*/)
 {
     QPainter painter(this);
 
@@ -773,11 +812,6 @@ void SplitInput::resizeEvent(QResizeEvent *)
     {
         this->ui_.textEdit->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     }
-}
-
-void SplitInput::mousePressEvent(QMouseEvent *)
-{
-    this->split_->giveFocus(Qt::MouseFocusReason);
 }
 
 }  // namespace chatterino

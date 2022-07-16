@@ -355,14 +355,14 @@ void GeneralPage::initLayout(GeneralPageView &layout)
 
     layout.addTitle("Streamer Mode");
     layout.addDescription(
-        "Chatterino can automatically change behavior if it detects that \"OBS "
-        "Studio\" is running.\nSelect which things you want to change while "
-        "streaming");
+        "Chatterino can automatically change behavior if it detects that any "
+        "streaming software is running.\nSelect which things you want to "
+        "change while streaming");
 
     ComboBox *dankDropdown =
         layout.addDropdown<std::underlying_type<StreamerModeSetting>::type>(
             "Enable Streamer Mode",
-            {"Disabled", "Enabled", "Automatic (Detect OBS)"},
+            {"Disabled", "Enabled", "Automatic (Detect streaming software)"},
             s.enableStreamerMode,
             [](int value) {
                 return value;
@@ -371,7 +371,7 @@ void GeneralPage::initLayout(GeneralPageView &layout)
                 return static_cast<StreamerModeSetting>(args.index);
             },
             false);
-    dankDropdown->setMinimumWidth(dankDropdown->minimumSizeHint().width() + 10);
+    dankDropdown->setMinimumWidth(dankDropdown->minimumSizeHint().width() + 30);
 
     layout.addCheckbox("Hide usercard avatars",
                        s.streamerModeHideUsercardAvatars);
@@ -644,6 +644,8 @@ void GeneralPage::initLayout(GeneralPageView &layout)
 
     layout.addCheckbox("Show 7TV Animated Profile Picture",
                        s.displaySevenTVAnimatedProfile);
+    layout.addCheckbox("Enable 7TV EventApi (requires restart)",
+                       s.enableSevenTVEventApi);
     layout.addCheckbox("Show moderation messages", s.hideModerationActions,
                        true);
     layout.addCheckbox("Show deletions of single messages",
@@ -657,6 +659,7 @@ void GeneralPage::initLayout(GeneralPageView &layout)
     layout.addCheckbox("Automatically close user popup when it loses focus",
                        s.autoCloseUserPopup);
     layout.addCheckbox("Lowercase domains (anti-phishing)", s.lowercaseDomains);
+    layout.addCheckbox("Display 7TV Paints", s.displaySevenTVPaints);
     layout.addCheckbox("Bold @usernames", s.boldUsernames);
     layout.addCheckbox("Color @usernames", s.colorUsernames);
     layout.addCheckbox("Try to find usernames without @ prefix",

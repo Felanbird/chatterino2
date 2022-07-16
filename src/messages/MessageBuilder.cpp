@@ -7,14 +7,13 @@
 #include "messages/Message.hpp"
 #include "messages/MessageElement.hpp"
 #include "providers/LinkResolver.hpp"
-#include "providers/twitch/PubsubActions.hpp"
+#include "providers/twitch/PubSubActions.hpp"
 #include "singletons/Emotes.hpp"
 #include "singletons/Resources.hpp"
 #include "singletons/Theme.hpp"
 #include "util/FormatTime.hpp"
 
 #include <QDateTime>
-#include <QImageReader>
 
 namespace chatterino {
 
@@ -176,6 +175,113 @@ std::pair<MessagePtr, MessagePtr> makeAutomodMessage(
 MessageBuilder::MessageBuilder()
     : message_(std::make_shared<Message>())
 {
+}
+
+MessageBuilder::MessageBuilder(SevenTvEventApiAddEmoteMessageTag,
+                               const QString &actor,
+                               std::vector<QString> emoteNames)
+    : MessageBuilder()
+{
+    auto text = emoteNames.size() == 1
+                    ? QString("added 7TV emote ")
+                    : QString("added %1 7TV emotes ").arg(emoteNames.size());
+
+    auto i = 0;
+    for (const auto &emoteName : emoteNames)
+    {
+        if (i++)
+        {
+            text += i == emoteNames.size() ? " and " : ", ";
+        }
+        text += emoteName;
+    }
+
+    text += ".";
+
+    this->emplace<TimestampElement>();
+    this->emplace<TextElement>(actor, MessageElementFlag::Username,
+                               MessageColor::System)
+        ->setLink({Link::UserInfo, actor});
+    this->emplace<TextElement>(text, MessageElementFlag::Text,
+                               MessageColor::System);
+
+    auto finalText = QString("%1 %2").arg(actor, text);
+
+    this->message().loginName = actor;
+    this->message().messageText = finalText;
+    this->message().searchText = finalText;
+    this->message().seventvEventTargetEmotes = emoteNames;
+
+    this->message().flags.set(MessageFlag::System);
+    this->message().flags.set(MessageFlag::SevenTvEventApiAddEmoteMessage);
+    this->message().flags.set(MessageFlag::DoNotTriggerNotification);
+}
+
+MessageBuilder::MessageBuilder(SevenTvEventApiRemoveEmoteMessageTag,
+                               const QString &actor,
+                               std::vector<QString> emoteNames)
+    : MessageBuilder()
+{
+    auto text = emoteNames.size() == 1
+                    ? QString("removed 7TV emote ")
+                    : QString("removed %1 7TV emotes ").arg(emoteNames.size());
+
+    auto i = 0;
+    for (const auto &emoteName : emoteNames)
+    {
+        if (i++)
+        {
+            text += i == emoteNames.size() ? " and " : ", ";
+        }
+        text += emoteName;
+    }
+
+    text += ".";
+
+    this->emplace<TimestampElement>();
+    this->emplace<TextElement>(actor, MessageElementFlag::Username,
+                               MessageColor::System)
+        ->setLink({Link::UserInfo, actor});
+    this->emplace<TextElement>(text, MessageElementFlag::Text,
+                               MessageColor::System);
+
+    auto finalText = QString("%1 %2").arg(actor, text);
+
+    this->message().loginName = actor;
+    this->message().messageText = finalText;
+    this->message().searchText = finalText;
+    this->message().seventvEventTargetEmotes = emoteNames;
+
+    this->message().flags.set(MessageFlag::System);
+    this->message().flags.set(MessageFlag::SevenTvEventApiRemoveEmoteMessage);
+    this->message().flags.set(MessageFlag::DoNotTriggerNotification);
+}
+
+MessageBuilder::MessageBuilder(SevenTvEventApiUpdateEmoteMessageTag,
+                               const QString &actor, const QString &emoteName,
+                               const QString &oldEmoteName)
+    : MessageBuilder()
+{
+    auto text =
+        QString("renamed 7TV emote %1 to %2.").arg(oldEmoteName, emoteName);
+
+    this->emplace<TimestampElement>();
+    this->emplace<TextElement>(actor, MessageElementFlag::Username,
+                               MessageColor::System)
+        ->setLink({Link::UserInfo, actor});
+    this->emplace<TextElement>(text, MessageElementFlag::Text,
+                               MessageColor::System);
+
+    auto finalText = QString("%1 %2").arg(actor, text);
+
+    this->message().loginName = actor;
+    this->message().messageText = finalText;
+    this->message().searchText = finalText;
+    this->message().seventvEventTargetEmotes = {emoteName, oldEmoteName};
+
+    this->message().flags.set(MessageFlag::System);
+    this->message().flags.set(MessageFlag::SevenTvEventApiUpdateEmoteMessage);
+    this->message().flags.set(MessageFlag::DoNotTriggerNotification);
 }
 
 MessageBuilder::MessageBuilder(SystemMessageTag, const QString &text,

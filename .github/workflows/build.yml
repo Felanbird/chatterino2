@@ -6,6 +6,11 @@ on:
     branches:
       - feature/pronouns-7TV
   pull_request:
+  workflow_dispatch:
+
+concurrency: 
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -43,10 +48,6 @@ jobs:
           key: ${{ runner.os }}-QtCache-${{ matrix.qt-version }}
 
       # LINUX
-      - name: Install p7zip (Ubuntu)
-        if: startsWith(matrix.os, 'ubuntu')
-        run: sudo apt-get update && sudo apt-get -y install p7zip-full
-
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
