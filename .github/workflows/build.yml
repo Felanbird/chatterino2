@@ -4,7 +4,7 @@ name: Build
 on:
   push:
     branches:
-      - chatterino7
+      - chore/nightly-build-test-2
   pull_request:
   workflow_dispatch:
 
@@ -223,7 +223,7 @@ jobs:
   create-release:
     needs: build
     runs-on: ubuntu-latest
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/chatterino7')
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/chore/nightly-build-test-2')
 
     steps:
       - name: Create release
@@ -232,11 +232,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: nightly-build
-          backup_tag_name: backup-nightly-build
+          tag_name: nightly-build-post-replies
           release_name: Nightly Release
           body: |
-              Nightly Build
+              Nightly Build with 7TV and Twitch reply support but without slow emotes
           prerelease: true
 
       - uses: actions/download-artifact@v3
