@@ -235,7 +235,7 @@ jobs:
           tag_name: nightly-build-post-replies
           release_name: Nightly Release
           body: |
-              Nightly Build with 7TV and Twitch reply support but without slow emotes
+              Nightly Build with 7TV, Twitch replies, Reloading message history on reconnect but without slow emotes
           prerelease: true
 
       - uses: actions/download-artifact@v3
