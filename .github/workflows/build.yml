@@ -4,7 +4,7 @@ name: Build
 on:
   push:
     branches:
-      - chatterino7
+      - chore/port-change
   pull_request:
   workflow_dispatch:
 
@@ -224,7 +224,7 @@ jobs:
   create-release:
     needs: build
     runs-on: ubuntu-latest
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/chatterino7')
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/chore/port-change')
 
     steps:
       - name: Create release
@@ -233,11 +233,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: nightly-build
-          backup_tag_name: backup-nightly-build
+          tag_name: nightly-build-with-port-change
           release_name: Nightly Release
           body: |
-              Nightly Build
+              Nightly Build including 7TV with port changed from `443` to `6697` for vpn/firewall blocks
           prerelease: true
 
       - uses: actions/download-artifact@v3
