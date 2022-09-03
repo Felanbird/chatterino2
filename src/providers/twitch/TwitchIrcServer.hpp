@@ -7,6 +7,8 @@
 #include "providers/bttv/BttvEmotes.hpp"
 #include "providers/ffz/FfzEmotes.hpp"
 #include "providers/irc/AbstractIrcServer.hpp"
+#include "providers/seventv/SeventvEmotes.hpp"
+#include "providers/seventv/SeventvEventApiManager.hpp"
 
 #include <chrono>
 #include <memory>
@@ -18,6 +20,7 @@ class Settings;
 class Paths;
 class PubSub;
 class TwitchChannel;
+class SeventvEventApi;
 
 class TwitchIrcServer final : public AbstractIrcServer, public Singleton
 {
@@ -46,7 +49,9 @@ public:
     IndirectChannel watchingChannel;
 
     PubSub *pubsub;
+    std::unique_ptr<SeventvEventApi> eventApi;
 
+    const SeventvEmotes &getSeventvEmotes() const;
     const BttvEmotes &getBttvEmotes() const;
     const FfzEmotes &getFfzEmotes() const;
 
@@ -83,6 +88,7 @@ private:
     std::chrono::steady_clock::time_point lastErrorTimeSpeed_;
     std::chrono::steady_clock::time_point lastErrorTimeAmount_;
 
+    SeventvEmotes seventv;
     BttvEmotes bttv;
     FfzEmotes ffz;
     QTimer bulkLiveStatusTimer_;

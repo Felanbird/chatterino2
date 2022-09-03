@@ -9,6 +9,7 @@
 #include "common/Outcome.hpp"
 #include "common/UniqueAccess.hpp"
 #include "messages/MessageThread.hpp"
+#include "providers/seventv/SeventvEventApiMessages.hpp"
 #include "providers/twitch/ChannelPointReward.hpp"
 #include "providers/twitch/TwitchEmotes.hpp"
 #include "providers/twitch/api/Helix.hpp"
@@ -50,6 +51,7 @@ using EmotePtr = std::shared_ptr<const Emote>;
 class EmoteMap;
 
 class TwitchBadges;
+class SeventvEmotes;
 class FfzEmotes;
 class BttvEmotes;
 
@@ -107,11 +109,18 @@ public:
     SharedAccessGuard<const StreamStatus> accessStreamStatus() const;
 
     // Emotes
+    boost::optional<EmotePtr> seventvEmote(const EmoteName &name) const;
     boost::optional<EmotePtr> bttvEmote(const EmoteName &name) const;
     boost::optional<EmotePtr> ffzEmote(const EmoteName &name) const;
+    std::shared_ptr<const EmoteMap> seventvEmotes() const;
     std::shared_ptr<const EmoteMap> bttvEmotes() const;
     std::shared_ptr<const EmoteMap> ffzEmotes() const;
 
+    void addSeventvEmote(const EventApiEmoteUpdate &action);
+    void updateSeventvEmote(const EventApiEmoteUpdate &action);
+    void removeSeventvEmote(const EventApiEmoteUpdate &action);
+
+    virtual void refresh7TVChannelEmotes(bool manualRefresh);
     virtual void refreshBTTVChannelEmotes(bool manualRefresh);
     virtual void refreshFFZChannelEmotes(bool manualRefresh);
 
@@ -166,6 +175,7 @@ private:
     void loadRecentMessages();
     void loadRecentMessagesReconnect();
     void fetchDisplayName();
+    void listenSeventv();
     void cleanUpReplyThreads();
     void showLoginMessage();
 
@@ -194,6 +204,7 @@ private:
     std::unordered_map<QString, std::weak_ptr<MessageThread>> threads_;
 
 protected:
+    Atomic<std::shared_ptr<const EmoteMap>> seventvEmotes_;
     Atomic<std::shared_ptr<const EmoteMap>> bttvEmotes_;
     Atomic<std::shared_ptr<const EmoteMap>> ffzEmotes_;
     Atomic<boost::optional<EmotePtr>> ffzCustomModBadge_;

@@ -117,6 +117,7 @@ public:
     BoolSetting enableSmoothScrolling = {"/appearance/smoothScrolling", true};
     BoolSetting enableSmoothScrollingNewMessages = {
         "/appearance/smoothScrollingNewMessages", false};
+    BoolSetting displaySevenTVPaints = {"/misc/displaySevenTVPaints", true};
     BoolSetting boldUsernames = {"/appearance/messages/boldUsernames", true};
     BoolSetting colorUsernames = {"/appearance/messages/colorUsernames", true};
     BoolSetting findAllUsernames = {"/appearance/messages/findAllUsernames",
@@ -144,6 +145,7 @@ public:
                                           true};
     BoolSetting showBadgesVanity = {"/appearance/badges/vanity", true};
     BoolSetting showBadgesChatterino = {"/appearance/badges/chatterino", true};
+    BoolSetting showBadgesSeventv = {"/appearance/badges/seventv", true};
     BoolSetting showBadgesFfz = {"/appearance/badges/ffz", true};
     BoolSetting useCustomFfzModeratorBadges = {
         "/appearance/badges/useCustomFfzModeratorBadges", true};
@@ -194,6 +196,7 @@ public:
     BoolSetting enableEmoteImages = {"/emotes/enableEmoteImages", true};
     BoolSetting animateEmotes = {"/emotes/enableGifAnimations", true};
     FloatSetting emoteScale = {"/emotes/scale", 1.f};
+    BoolSetting showUnlistedEmotes = {"/emotes/showUnlistedEmotes", false};
 
     QStringSetting emojiSet = {"/emotes/emojiSet", "Twitter"};
 
@@ -383,6 +386,10 @@ public:
         "/misc/twitch/messageHistoryLimit",
         800,
     };
+    BoolSetting displaySevenTVAnimatedProfile = {
+        "/misc/displaySevenTVAnimatedProfile", true};
+
+    BoolSetting enableSevenTVEventApi = {"/misc/enableSevenTVEventApi", true};
 
     IntSetting emotesTooltipPreview = {"/misc/emotesTooltipPreview", 1};
     BoolSetting openLinksIncognito = {"/misc/openLinksIncognito", 0};

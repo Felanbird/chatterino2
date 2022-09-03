@@ -4,7 +4,7 @@ name: Build
 on:
   push:
     branches:
-      - master
+      - chatterino7
   pull_request:
   workflow_dispatch:
 
@@ -18,7 +18,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
-        qt-version: [5.15.2, 5.12.12]
+        qt-version: [5.15.2]
         pch: [true]
         include:
           - os: ubuntu-latest
@@ -233,7 +233,7 @@ jobs:
   create-release:
     needs: build
     runs-on: ubuntu-latest
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/master')
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/chatterino7')
 
     steps:
       - name: Create release

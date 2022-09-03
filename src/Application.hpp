@@ -28,6 +28,8 @@ class Settings;
 class Fonts;
 class Toasts;
 class ChatterinoBadges;
+class SeventvBadges;
+class SeventvPaints;
 class FfzBadges;
 
 class IApplication
@@ -85,6 +87,8 @@ public:
     HighlightController *const highlights{};
     TwitchIrcServer *const twitch{};
     ChatterinoBadges *const chatterinoBadges{};
+    SeventvBadges *const seventvBadges{};
+    SeventvPaints *const seventvPaints{};
     FfzBadges *const ffzBadges{};
 
     /*[[deprecated]]*/ Logging *const logging{};
@@ -145,6 +149,7 @@ public:
 private:
     void addSingleton(Singleton *singleton);
     void initPubSub();
+    void initEventApi();
     void initNm(Paths &paths);
 
     template <typename T,
