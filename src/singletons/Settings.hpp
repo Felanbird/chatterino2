@@ -295,6 +295,17 @@ public:
     QStringSetting firstMessageHighlightColor = {
         "/highlighting/firstMessageHighlightColor", ""};
 
+    BoolSetting enableElevatedMessageHighlight = {
+        "/highlighting/elevatedMessageHighlight/highlighted", true};
+    //    BoolSetting enableElevatedMessageHighlightSound = {
+    //        "/highlighting/elevatedMessageHighlight/enableSound", false};
+    //    BoolSetting enableElevatedMessageHighlightTaskbar = {
+    //        "/highlighting/elevatedMessageHighlight/enableTaskbarFlashing", false};
+    QStringSetting elevatedMessageHighlightSoundUrl = {
+        "/highlighting/elevatedMessageHighlight/soundUrl", ""};
+    QStringSetting elevatedMessageHighlightColor = {
+        "/highlighting/elevatedMessageHighlight/color", ""};
+
     BoolSetting enableSubHighlight = {
         "/highlighting/subHighlight/subsHighlighted", true};
     BoolSetting enableSubHighlightSound = {
