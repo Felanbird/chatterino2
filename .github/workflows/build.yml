@@ -244,7 +244,7 @@ jobs:
           tag_name: nightly-build-3907
           release_name: Nightly Release
           body: |
-              Nightly Build testing c2 PR 3907 + 7tv
+              Nightly Build with chatterino7
           prerelease: true
 
       - uses: actions/download-artifact@v3
