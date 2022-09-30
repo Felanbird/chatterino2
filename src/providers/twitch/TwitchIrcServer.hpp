@@ -40,6 +40,8 @@ public:
     void reloadAllBTTVChannelEmotes();
     void reloadFFZGlobalEmotes();
     void reloadAllFFZChannelEmotes();
+    void reloadSevenTVGlobalEmotes();
+    void reloadAllSevenTVChannelEmotes();
 
     Atomic<QString> lastUserThatWhisperedMe;
 

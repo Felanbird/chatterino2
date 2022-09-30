@@ -107,7 +107,7 @@ TwitchChannel::TwitchChannel(const QString &name)
         this->refreshLiveStatus();
         this->refreshBadges();
         this->refreshCheerEmotes();
-        this->refresh7TVChannelEmotes(false);
+        this->refreshSevenTVChannelEmotes(false);
         this->refreshFFZChannelEmotes(false);
         this->refreshBTTVChannelEmotes(false);
     });
@@ -206,8 +206,14 @@ void TwitchChannel::setLocalizedName(const QString &name)
     this->nameOptions.localizedName = name;
 }
 
-void TwitchChannel::refresh7TVChannelEmotes(bool manualRefresh)
+void TwitchChannel::refreshSevenTVChannelEmotes(bool manualRefresh)
 {
+    if (!Settings::instance().enableSevenTVChannelEmotes)
+    {
+        this->seventvEmotes_.set(EMPTY_EMOTE_MAP);
+        return;
+    }
+
     SeventvEmotes::loadChannel(
         weakOf<Channel>(this), this->roomId(),
         [this, weak = weakOf<Channel>(this)](auto &&emoteMap) {
