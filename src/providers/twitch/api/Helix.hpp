@@ -300,6 +300,35 @@ struct HelixChannelEmote {
     }
 };
 
+struct HelixChatSettings {
+    const QString broadcasterId;
+    const bool emoteMode;
+    // boost::none if disabled
+    const boost::optional<int> followerModeDuration;  // time in minutes
+    const boost::optional<int>
+        nonModeratorChatDelayDuration;            // time in seconds
+    const boost::optional<int> slowModeWaitTime;  // time in seconds
+    const bool subscriberMode;
+    const bool uniqueChatMode;
+
+    explicit HelixChatSettings(QJsonObject jsonObject)
+        : broadcasterId(jsonObject.value("broadcaster_id").toString())
+        , emoteMode(jsonObject.value("emote_mode").toBool())
+        , followerModeDuration(boost::make_optional(
+              jsonObject.value("follower_mode").toBool(),
+              jsonObject.value("follower_mode_duration").toInt()))
+        , nonModeratorChatDelayDuration(boost::make_optional(
+              jsonObject.value("non_moderator_chat_delay").toBool(),
+              jsonObject.value("non_moderator_chat_delay_duration").toInt()))
+        , slowModeWaitTime(boost::make_optional(
+              jsonObject.value("slow_mode").toBool(),
+              jsonObject.value("slow_mode_wait_time").toInt()))
+        , subscriberMode(jsonObject.value("subscriber_mode").toBool())
+        , uniqueChatMode(jsonObject.value("unique_chat_mode").toBool())
+    {
+    }
+};
+
 enum class HelixAnnouncementColor {
     Blue,
     Green,
@@ -390,6 +419,50 @@ enum class HelixAddChannelVIPError {
     // The error message is forwarded directly from the Twitch API
     Forwarded,
 };
+
+enum class HelixRemoveChannelVIPError {
+    Unknown,
+    UserMissingScope,
+    UserNotAuthorized,
+    Ratelimited,
+
+    // The error message is forwarded directly from the Twitch API
+    Forwarded,
+};
+
+// These changes are from the helix-command-migration/unban-untimeout branch
+enum class HelixUnbanUserError {
+    Unknown,
+    UserMissingScope,
+    UserNotAuthorized,
+    Ratelimited,
+    ConflictingOperation,
+    TargetNotBanned,
+
+    // The error message is forwarded directly from the Twitch API
+    Forwarded,
+};  // These changes are from the helix-command-migration/unban-untimeout branch
+
+enum class HelixStartRaidError {  // /raid
+    Unknown,
+    UserMissingScope,
+    UserNotAuthorized,
+    CantRaidYourself,
+    Ratelimited,
+
+    // The error message is forwarded directly from the Twitch API
+    Forwarded,
+};  // /raid
+
+enum class HelixUpdateChatSettingsError {  // update chat settings
+    Unknown,
+    UserMissingScope,
+    UserNotAuthorized,
+    Ratelimited,
+    Forbidden,
+    // The error message is forwarded directly from the Twitch API
+    Forwarded,
+};  // update chat settings
 
 class IHelix
 {
@@ -551,7 +624,89 @@ public:
         QString broadcasterID, QString userID, ResultCallback<> successCallback,
         FailureCallback<HelixAddChannelVIPError, QString> failureCallback) = 0;
 
+    // https://dev.twitch.tv/docs/api/reference#remove-channel-vip
+    virtual void removeChannelVIP(
+        QString broadcasterID, QString userID, ResultCallback<> successCallback,
+        FailureCallback<HelixRemoveChannelVIPError, QString>
+            failureCallback) = 0;
+
+    // These changes are from the helix-command-migration/unban-untimeout branch
+    // https://dev.twitch.tv/docs/api/reference#unban-user
+    // These changes are from the helix-command-migration/unban-untimeout branch
+    virtual void unbanUser(
+        QString broadcasterID, QString moderatorID, QString userID,
+        ResultCallback<> successCallback,
+        FailureCallback<HelixUnbanUserError, QString> failureCallback) = 0;
+    // These changes are from the helix-command-migration/unban-untimeout branch
+
+    // https://dev.twitch.tv/docs/api/reference#start-a-raid
+    virtual void startRaid(
+        QString fromBroadcasterID, QString toBroadcasterID,
+        ResultCallback<> successCallback,
+        FailureCallback<HelixStartRaidError, QString> failureCallback) = 0;
+    // https://dev.twitch.tv/docs/api/reference#start-a-raid
+
+    // Updates the emote mode using
+    // https://dev.twitch.tv/docs/api/reference#update-chat-settings
+    virtual void updateEmoteMode(
+        QString broadcasterID, QString moderatorID, bool emoteMode,
+        ResultCallback<HelixChatSettings> successCallback,
+        FailureCallback<HelixUpdateChatSettingsError, QString>
+            failureCallback) = 0;
+
+    // Updates the follower mode using
+    // https://dev.twitch.tv/docs/api/reference#update-chat-settings
+    virtual void updateFollowerMode(
+        QString broadcasterID, QString moderatorID,
+        boost::optional<int> followerModeDuration,
+        ResultCallback<HelixChatSettings> successCallback,
+        FailureCallback<HelixUpdateChatSettingsError, QString>
+            failureCallback) = 0;
+
+    // Updates the non-moderator chat delay using
+    // https://dev.twitch.tv/docs/api/reference#update-chat-settings
+    virtual void updateNonModeratorChatDelay(
+        QString broadcasterID, QString moderatorID,
+        boost::optional<int> nonModeratorChatDelayDuration,
+        ResultCallback<HelixChatSettings> successCallback,
+        FailureCallback<HelixUpdateChatSettingsError, QString>
+            failureCallback) = 0;
+
+    // Updates the slow mode using
+    // https://dev.twitch.tv/docs/api/reference#update-chat-settings
+    virtual void updateSlowMode(
+        QString broadcasterID, QString moderatorID,
+        boost::optional<int> slowModeWaitTime,
+        ResultCallback<HelixChatSettings> successCallback,
+        FailureCallback<HelixUpdateChatSettingsError, QString>
+            failureCallback) = 0;
+
+    // Updates the subscriber mode using
+    // https://dev.twitch.tv/docs/api/reference#update-chat-settings
+    virtual void updateSubscriberMode(
+        QString broadcasterID, QString moderatorID, bool subscriberMode,
+        ResultCallback<HelixChatSettings> successCallback,
+        FailureCallback<HelixUpdateChatSettingsError, QString>
+            failureCallback) = 0;
+
+    // Updates the unique chat mode using
+    // https://dev.twitch.tv/docs/api/reference#update-chat-settings
+    virtual void updateUniqueChatMode(
+        QString broadcasterID, QString moderatorID, bool uniqueChatMode,
+        ResultCallback<HelixChatSettings> successCallback,
+        FailureCallback<HelixUpdateChatSettingsError, QString>
+            failureCallback) = 0;
+    // https://dev.twitch.tv/docs/api/reference#update-chat-settings
+
     virtual void update(QString clientId, QString oauthToken) = 0;
+
+protected:
+    // https://dev.twitch.tv/docs/api/reference#update-chat-settings
+    virtual void updateChatSettings(
+        QString broadcasterID, QString moderatorID, QJsonObject json,
+        ResultCallback<HelixChatSettings> successCallback,
+        FailureCallback<HelixUpdateChatSettingsError, QString>
+            failureCallback) = 0;
 };
 
 class Helix final : public IHelix
@@ -705,9 +860,89 @@ public:
                        FailureCallback<HelixAddChannelVIPError, QString>
                            failureCallback) final;
 
+    // https://dev.twitch.tv/docs/api/reference#remove-channel-vip
+    void removeChannelVIP(QString broadcasterID, QString userID,
+                          ResultCallback<> successCallback,
+                          FailureCallback<HelixRemoveChannelVIPError, QString>
+                              failureCallback) final;
+
+    // These changes are from the helix-command-migration/unban-untimeout branch
+    // https://dev.twitch.tv/docs/api/reference#unban-user
+    // These changes are from the helix-command-migration/unban-untimeout branch
+    void unbanUser(
+        QString broadcasterID, QString moderatorID, QString userID,
+        ResultCallback<> successCallback,
+        FailureCallback<HelixUnbanUserError, QString> failureCallback) final;
+    // These changes are from the helix-command-migration/unban-untimeout branch
+
+    // https://dev.twitch.tv/docs/api/reference#start-a-raid
+    void startRaid(
+        QString fromBroadcasterID, QString toBroadcasterID,
+        ResultCallback<> successCallback,
+        FailureCallback<HelixStartRaidError, QString> failureCallback) final;
+    // https://dev.twitch.tv/docs/api/reference#start-a-raid
+
+    // Updates the emote mode using
+    // https://dev.twitch.tv/docs/api/reference#update-chat-settings
+    void updateEmoteMode(QString broadcasterID, QString moderatorID,
+                         bool emoteMode,
+                         ResultCallback<HelixChatSettings> successCallback,
+                         FailureCallback<HelixUpdateChatSettingsError, QString>
+                             failureCallback) final;
+
+    // Updates the follower mode using
+    // https://dev.twitch.tv/docs/api/reference#update-chat-settings
+    void updateFollowerMode(
+        QString broadcasterID, QString moderatorID,
+        boost::optional<int> followerModeDuration,
+        ResultCallback<HelixChatSettings> successCallback,
+        FailureCallback<HelixUpdateChatSettingsError, QString> failureCallback)
+        final;
+
+    // Updates the non-moderator chat delay using
+    // https://dev.twitch.tv/docs/api/reference#update-chat-settings
+    void updateNonModeratorChatDelay(
+        QString broadcasterID, QString moderatorID,
+        boost::optional<int> nonModeratorChatDelayDuration,
+        ResultCallback<HelixChatSettings> successCallback,
+        FailureCallback<HelixUpdateChatSettingsError, QString> failureCallback)
+        final;
+
+    // Updates the slow mode using
+    // https://dev.twitch.tv/docs/api/reference#update-chat-settings
+    void updateSlowMode(QString broadcasterID, QString moderatorID,
+                        boost::optional<int> slowModeWaitTime,
+                        ResultCallback<HelixChatSettings> successCallback,
+                        FailureCallback<HelixUpdateChatSettingsError, QString>
+                            failureCallback) final;
+
+    // Updates the subscriber mode using
+    // https://dev.twitch.tv/docs/api/reference#update-chat-settings
+    void updateSubscriberMode(
+        QString broadcasterID, QString moderatorID, bool subscriberMode,
+        ResultCallback<HelixChatSettings> successCallback,
+        FailureCallback<HelixUpdateChatSettingsError, QString> failureCallback)
+        final;
+
+    // Updates the unique chat mode using
+    // https://dev.twitch.tv/docs/api/reference#update-chat-settings
+    void updateUniqueChatMode(
+        QString broadcasterID, QString moderatorID, bool uniqueChatMode,
+        ResultCallback<HelixChatSettings> successCallback,
+        FailureCallback<HelixUpdateChatSettingsError, QString> failureCallback)
+        final;
+
     void update(QString clientId, QString oauthToken) final;
 
     static void initialize();
+
+protected:
+    // https://dev.twitch.tv/docs/api/reference#update-chat-settings
+    void updateChatSettings(
+        QString broadcasterID, QString moderatorID, QJsonObject json,
+        ResultCallback<HelixChatSettings> successCallback,
+        FailureCallback<HelixUpdateChatSettingsError, QString> failureCallback)
+        final;
 
 private:
     NetworkRequest makeRequest(QString url, QUrlQuery urlQuery);
