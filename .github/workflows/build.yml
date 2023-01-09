@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  C2_ENABLE_LTO: ${{ github.ref == 'refs/heads/master' }}
+  C2_ENABLE_LTO: ${{ github.ref == 'refs/heads/feature/use-ivr-for-recent-messages' }}
 
 jobs:
   build:
@@ -245,7 +245,7 @@ jobs:
   create-release:
     needs: build
     runs-on: ubuntu-latest
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/master')
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/feature/use-ivr-for-recent-messages')
 
     steps:
       - uses: actions/download-artifact@v3
@@ -277,5 +277,5 @@ jobs:
           artifacts: "release-artifacts/*"
           body: ${{ github.event.head_commit.message }}
           prerelease: true
-          name: Nightly Release
-          tag: nightly-build
+          name: Nightly Release using IVR for Message History
+          tag: nightly-build-ivr-recent-messages
