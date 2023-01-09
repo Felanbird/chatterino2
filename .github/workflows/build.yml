@@ -4,7 +4,7 @@ name: Build
 on:
   push:
     branches:
-      - master
+      - feature/use-ivr-for-recent-messages
   pull_request:
   workflow_dispatch:
 
