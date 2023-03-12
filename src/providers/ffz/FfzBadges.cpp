@@ -1,5 +1,10 @@
 #include "FfzBadges.hpp"
 
+#include "common/NetworkRequest.hpp"
+#include "common/Outcome.hpp"
+#include "messages/Emote.hpp"
+#include "providers/ffz/FfzUtil.hpp"
+
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonValue>
@@ -7,9 +12,6 @@
 #include <QUrl>
 #include <map>
 #include <shared_mutex>
-#include "common/NetworkRequest.hpp"
-#include "common/Outcome.hpp"
-#include "messages/Emote.hpp"
 
 namespace chatterino {
 
@@ -64,14 +66,12 @@ void FfzBadges::load()
                 auto jsonBadge = jsonBadge_.toObject();
                 auto jsonUrls = jsonBadge.value("urls").toObject();
 
-                auto emote = Emote{
-                    EmoteName{},
-                    ImageSet{
-                        Url{QString("https:") + jsonUrls.value("1").toString()},
-                        Url{QString("https:") + jsonUrls.value("2").toString()},
-                        Url{QString("https:") +
-                            jsonUrls.value("4").toString()}},
-                    Tooltip{jsonBadge.value("title").toString()}, Url{}};
+                auto emote =
+                    Emote{EmoteName{},
+                          ImageSet{parseFfzUrl(jsonUrls.value("1").toString()),
+                                   parseFfzUrl(jsonUrls.value("2").toString()),
+                                   parseFfzUrl(jsonUrls.value("4").toString())},
+                          Tooltip{jsonBadge.value("title").toString()}, Url{}};
 
                 Badge badge;
 

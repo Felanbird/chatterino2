@@ -8,6 +8,7 @@
 #include "messages/Emote.hpp"
 #include "messages/Image.hpp"
 #include "messages/MessageBuilder.hpp"
+#include "providers/ffz/FfzUtil.hpp"
 #include "providers/twitch/TwitchChannel.hpp"
 
 namespace chatterino {
@@ -26,8 +27,9 @@ namespace {
 
         assert(emote.isString());
 
-        return {"https:" + emote.toString()};
+        return parseFfzUrl(emote.toString());
     }
+
     void fillInEmoteData(const QJsonObject &urls, const EmoteName &name,
                          const QString &tooltip, Emote &emoteData)
     {
