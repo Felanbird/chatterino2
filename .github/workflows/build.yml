@@ -384,10 +384,10 @@ jobs:
           body: Chatterino Nightly build using an old implementation of Alejo's Pronoun Extension
           prerelease: true
           name: Nightly Release
-          tag: nightly-build
+          tag: nightly-build-pronouns
 
       - name: Update nightly-build tag
         run: |
-          git tag -f nightly-build
-          git push -f origin nightly-build
+          git tag -f nightly-build-pronouns
+          git push -f origin nightly-build-pronouns
         shell: bash
