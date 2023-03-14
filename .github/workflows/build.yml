@@ -4,7 +4,7 @@ name: Build
 on:
   push:
     branches:
-      - master
+      - feature/pronoun-support
   pull_request:
   workflow_dispatch:
 
@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  C2_ENABLE_LTO: ${{ github.ref == 'refs/heads/master' }}
+  C2_ENABLE_LTO: ${{ github.ref == 'refs/heads/feature/pronoun-support' }}
   CHATTERINO_REQUIRE_CLEAN_GIT: On
   C2_BUILD_WITH_QT6: Off
 
@@ -381,7 +381,7 @@ jobs:
           allowUpdates: true
           artifactErrorsFailBuild: true
           artifacts: "release-artifacts/*"
-          body: ${{ github.event.head_commit.message }}
+          body: Chatterino Nightly build using an old implementation of Alejo's Pronoun Extension
           prerelease: true
           name: Nightly Release
           tag: nightly-build

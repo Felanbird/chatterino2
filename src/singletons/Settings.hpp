@@ -169,8 +169,10 @@ public:
     BoolSetting useCustomFfzVipBadges = {
         "/appearance/badges/useCustomFfzVipBadges", true};
     BoolSetting showBadgesSevenTV = {"/appearance/badges/seventv", true};
+    BoolSetting showBadgesPronouns = {"/appearance/badges/pronouns", false};
 
     /// Behaviour
+    BoolSetting showPronounsInUserInfo = {"/behaviour/showPronounsInUserInfo"};
     BoolSetting allowDuplicateMessages = {"/behaviour/allowDuplicateMessages",
                                           true};
     BoolSetting mentionUsersWithAt = {"/behaviour/mentionUsersWithAt", false};

@@ -712,7 +712,17 @@ void UserInfoPopup::setData(const QString &name,
     this->setWindowTitle(
         TEXT_TITLE.arg(name, this->underlyingChannel_->getName()));
 
-    this->ui_.nameLabel->setText(name);
+    auto pronouns = dynamic_cast<TwitchChannel *>(this->channel_.get())
+                    ->getUserPronouns(name);
+
+    if (!pronouns.isEmpty() && getSettings()->showPronounsInUserInfo)
+    {
+        this->ui_.nameLabel->setText(name + " (" + pronouns + ")");
+    }
+    else
+    {
+        this->ui_.nameLabel->setText(name);
+    }
     this->ui_.nameLabel->setProperty("copy-text", name);
 
     this->updateUserData();
@@ -765,8 +775,10 @@ void UserInfoPopup::updateUserData()
 {
     std::weak_ptr<bool> hack = this->lifetimeHack_;
     auto currentUser = getApp()->accounts->twitch.getCurrent();
+    auto pronouns = dynamic_cast<TwitchChannel *>(this->channel_.get())
+                        ->getUserPronouns(this->userName_);
 
-    const auto onUserFetchFailed = [this, hack] {
+    const auto onUserFetchFailed = [this, hack, pronouns] {
         if (!hack.lock())
         {
             return;
@@ -777,22 +789,29 @@ void UserInfoPopup::updateUserData()
             TEXT_FOLLOWERS.arg(TEXT_UNAVAILABLE));
         this->ui_.createdDateLabel->setText(TEXT_CREATED.arg(TEXT_UNAVAILABLE));
 
-        this->ui_.nameLabel->setText(this->userName_);
+        if (!pronouns.isEmpty() && getSettings()->showPronounsInUserInfo)
+        {
+            this->ui_.nameLabel->setText(this->userName_ + " (" + pronouns +
+                                         ")");
+        }
+        else
+        {
+            this->ui_.nameLabel->setText(this->userName_);
+        }
 
         this->ui_.userIDLabel->setText(QString("ID ") +
                                        QString(TEXT_UNAVAILABLE));
         this->ui_.userIDLabel->setProperty("copy-text",
                                            QString(TEXT_UNAVAILABLE));
     };
-    const auto onUserFetched = [this, hack,
-                                currentUser](const HelixUser &user) {
+    const auto onUserFetched = [this, hack, currentUser,
+                                pronouns](const HelixUser &user) {
         if (!hack.lock())
         {
             return;
         }
 
         this->userId_ = user.id;
-        this->avatarUrl_ = user.profileImageUrl;
 
         // copyable button for login name of users with a localized username
         if (user.displayName.toLower() != user.login)
@@ -805,7 +824,15 @@ void UserInfoPopup::updateUserData()
         }
         else
         {
-            this->ui_.nameLabel->setText(user.displayName);
+            if (!pronouns.isEmpty() && getSettings()->showPronounsInUserInfo)
+            {
+                this->ui_.nameLabel->setText(user.displayName + " (" +
+                                             pronouns + ")");
+            }
+            else
+            {
+                this->ui_.nameLabel->setText(user.displayName);
+            }
             this->ui_.nameLabel->setProperty("copy-text", user.displayName);
         }
 

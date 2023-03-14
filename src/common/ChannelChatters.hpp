@@ -27,6 +27,8 @@ public:
     const QColor getUserColor(const QString &user);
     void setUserColor(const QString &user, const QColor &color);
     void updateOnlineChatters(const std::unordered_set<QString> &usernames);
+    const QString getUserPronouns(const QString &user);
+    void setUserPronouns(const QString &user, const QString &pronouns);
 
     // colorsSize returns the amount of colors stored in `chatterColors_`
     // NOTE: This function is only meant to be used in tests and benchmarks
@@ -40,6 +42,7 @@ private:
     // maps 2 char prefix to set of names
     UniqueAccess<ChatterSet> chatters_;
     UniqueAccess<cache::lru_cache<QString, QRgb>> chatterColors_;
+    UniqueAccess<std::map<QString, QString>> chatterPronouns_;
 
     // combines multiple joins/parts into one message
     UniqueAccess<QStringList> joinedUsers_;

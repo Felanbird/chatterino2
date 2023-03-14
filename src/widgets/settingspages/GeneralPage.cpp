@@ -736,8 +736,13 @@ void GeneralPage::initLayout(GeneralPageView &layout)
                        s.useCustomFfzModeratorBadges);
     layout.addCheckbox("Use custom FrankerFaceZ VIP badges",
                        s.useCustomFfzVipBadges);
+    layout.addCheckbox("Pronouns (Alejo_47's Extension)",
+                       getSettings()->showBadgesPronouns);
 
     layout.addSubtitle("Miscellaneous");
+
+    layout.addCheckbox("Show pronouns in user info popup",
+                       s.showPronounsInUserInfo);    
 
     if (supportsIncognitoLinks())
     {
