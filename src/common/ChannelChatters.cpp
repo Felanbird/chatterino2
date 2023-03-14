@@ -31,8 +31,6 @@ void ChannelChatters::addJoinedUser(const QString &user)
     auto joinedUsers = this->joinedUsers_.access();
     joinedUsers->append(user);
 
-    qDebug() << "joined user: " << user;
-
     if (!this->joinedUsersMergeQueued_)
     {
         this->joinedUsersMergeQueued_ = true;
