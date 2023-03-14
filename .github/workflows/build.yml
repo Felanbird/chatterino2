@@ -4,7 +4,7 @@ name: Build
 on:
   push:
     branches:
-      - feature/pronouns-7TV
+      - chore/fix-FFZ-emotes-on-pronoun-build
   pull_request:
   workflow_dispatch:
 
@@ -248,7 +248,7 @@ jobs:
   create-release:
     needs: build
     runs-on: ubuntu-latest
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/feature/pronouns-7TV')
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/feature/chore/fix-FFZ-emotes-on-pronoun-build')
 
     steps:
       - name: Create release
@@ -257,11 +257,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: nightly-build-7TV
-          backup_tag_name: backup-nightly-build-7TV
-          release_name: Nightly Release with 7TV
+          tag_name: nightly-build-pronouns-fix
+          release_name: Nightly Release
           body: |
-              Nightly Build with 7TV
+             Old GabeEddyT/pronouns build(s) with fixed FFZ emotes
           prerelease: true
 
       - uses: actions/download-artifact@v3
