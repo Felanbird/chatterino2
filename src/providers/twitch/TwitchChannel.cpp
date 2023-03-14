@@ -1217,12 +1217,12 @@ void TwitchChannel::refreshChatters()
             {
                 this->updateOnlineChatters(result.chatters);
 
-                /* this section of code was needed before this file was refactored
+                this->chatterCount_ = result.total;
+
                 if (getSettings()->showBadgesPronouns ||
                         getSettings()->showPronounsInUserInfo)
                         this->refreshPronouns();
-                */
-                this->chatterCount_ = result.total;
+
             }
         },
         // Refresh chatters should only be used when failing silently is an option
