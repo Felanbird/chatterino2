@@ -4,7 +4,7 @@ name: Build
 on:
   push:
     branches:
-      - master
+      - chore/abc123
   pull_request:
   workflow_dispatch:
 
@@ -353,7 +353,7 @@ jobs:
   create-release:
     needs: build
     runs-on: ubuntu-latest
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/master')
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/chore/abc123')
 
     steps:
       - uses: actions/checkout@v3
@@ -427,6 +427,7 @@ jobs:
 
       - name: Mark experimental
         run: |
+          ls
           for file in *; do mv -n "$file" "$(echo $file | sed 's/\(6\(\.[[:digit:]]\)\{2\}\)/\1-EXPERIMENTAL/g')"; done
         working-directory: release-artifacts
         shell: bash
@@ -441,10 +442,10 @@ jobs:
           body: ${{ github.event.head_commit.message }}
           prerelease: true
           name: Nightly Release
-          tag: nightly-build
+          tag: nightly-build-abc
 
       - name: Update nightly-build tag
         run: |
-          git tag -f nightly-build
-          git push -f origin nightly-build
+          git tag -f nightly-build-abc
+          git push -f origin nightly-build-abc
         shell: bash
