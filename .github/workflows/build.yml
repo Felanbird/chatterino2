@@ -4,7 +4,7 @@ name: Build
 on:
   push:
     branches:
-      - master
+      - test/randomly-check-a-qt6-thing
   pull_request:
   workflow_dispatch:
 
@@ -361,7 +361,7 @@ jobs:
   create-release:
     needs: build
     runs-on: ubuntu-latest
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/master')
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/test/randomly-check-a-qt6-thing')
 
     steps:
       - uses: actions/checkout@v3
@@ -450,10 +450,10 @@ jobs:
           body: ${{ github.event.head_commit.message }}
           prerelease: true
           name: Nightly Release
-          tag: nightly-build
+          tag: nightly-build-updater
 
       - name: Update nightly-build tag
         run: |
-          git tag -f nightly-build
-          git push -f origin nightly-build
+          git tag -f nightly-build-updater
+          git push -f origin nightly-build-updater
         shell: bash
