@@ -1,8 +1,7 @@
 #pragma once
 
+#include <boost/optional.hpp>
 #include <QString>
-
-#include <optional>
 
 namespace chatterino {
 
@@ -18,7 +17,7 @@ public:
     const QString twitchServerHost;
     const uint16_t twitchServerPort;
     const bool twitchServerSecure;
-    const std::optional<QString> proxyUrl;
+    const boost::optional<QString> proxyUrl;
 };
 
 }  // namespace chatterino

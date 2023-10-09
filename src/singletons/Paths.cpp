@@ -83,7 +83,7 @@ void Paths::initCheckPortable()
 
 void Paths::initRootDirectory()
 {
-    assert(this->portable_.has_value());
+    assert(this->portable_.is_initialized());
 
     // Root path = %APPDATA%/Chatterino or the folder that the executable
     // resides in

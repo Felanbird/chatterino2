@@ -11,6 +11,7 @@
 #include "singletons/Paths.hpp"
 #include "singletons/Settings.hpp"
 
+#include <boost/optional/optional_io.hpp>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <QDebug>
@@ -267,7 +268,7 @@ TEST_F(HighlightControllerTest, LoggedInAndConfigured)
                 {
                     false,                                  // alert
                     false,                                  // playsound
-                    std::nullopt,                           // custom sound url
+                    boost::none,                            // custom sound url
                     std::make_shared<QColor>("#7fffffff"),  // color
                     false,
                 },
@@ -306,7 +307,7 @@ TEST_F(HighlightControllerTest, LoggedInAndConfigured)
                 {
                     true,                                   // alert
                     false,                                  // playsound
-                    std::nullopt,                           // custom sound url
+                    boost::none,                            // custom sound url
                     std::make_shared<QColor>("#7fe8b7eb"),  // color
                     false,                                  //showInMentions
                 },
@@ -331,7 +332,7 @@ TEST_F(HighlightControllerTest, LoggedInAndConfigured)
                 {
                     true,                                   // alert
                     false,                                  // playsound
-                    std::nullopt,                           // custom sound url
+                    boost::none,                            // custom sound url
                     std::make_shared<QColor>("#7fffffff"),  // color
                     false,                                  //showInMentions
                 },
@@ -357,7 +358,7 @@ TEST_F(HighlightControllerTest, LoggedInAndConfigured)
                 {
                     false,                                  // alert
                     false,                                  // playsound
-                    std::nullopt,                           // custom sound url
+                    boost::none,                            // custom sound url
                     std::make_shared<QColor>("#7fe8b7ec"),  // color
                     true,                                   // showInMentions
                 },
@@ -378,7 +379,7 @@ TEST_F(HighlightControllerTest, LoggedInAndConfigured)
                 {
                     true,                                   // alert
                     false,                                  // playsound
-                    std::nullopt,                           // custom sound url
+                    boost::none,                            // custom sound url
                     std::make_shared<QColor>("#7ff19900"),  // color
                     true,                                   // showInMentions
                 },
@@ -398,7 +399,7 @@ TEST_F(HighlightControllerTest, LoggedInAndConfigured)
                 {
                     true,                                   // alert
                     true,                                   // playsound
-                    std::nullopt,                           // custom sound url
+                    boost::none,                            // custom sound url
                     std::make_shared<QColor>("#7f7f3f49"),  // color
                     true,                                   // showInMentions
                 },
@@ -419,7 +420,7 @@ TEST_F(HighlightControllerTest, LoggedInAndConfigured)
                 {
                     false,                                  // alert
                     false,                                  // playsound
-                    std::nullopt,                           // custom sound url
+                    boost::none,                            // custom sound url
                     std::make_shared<QColor>("#6fffffff"),  // color
                     false,
                 },
@@ -441,9 +442,9 @@ TEST_F(HighlightControllerTest, LoggedInAndConfigured)
                 .state = true,  // state
                 .result =
                     {
-                        false,         // alert
-                        false,         // playsound
-                        std::nullopt,  // custom sound url
+                        false,        // alert
+                        false,        // playsound
+                        boost::none,  // custom sound url
                         std::make_shared<QColor>(
                             HighlightPhrase::
                                 FALLBACK_HIGHLIGHT_COLOR),  // color
@@ -467,9 +468,9 @@ TEST_F(HighlightControllerTest, LoggedInAndConfigured)
                 .state = true,  // state
                 .result =
                     {
-                        true,          // alert
-                        true,          // playsound
-                        std::nullopt,  // custom sound url
+                        true,         // alert
+                        true,         // playsound
+                        boost::none,  // custom sound url
                         std::make_shared<QColor>("#7f7f3f49"),  // color
                         true,  // showInMentions
                     },

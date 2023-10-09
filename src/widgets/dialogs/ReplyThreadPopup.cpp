@@ -239,7 +239,7 @@ void ReplyThreadPopup::addMessagesFromThread()
     this->ui_.threadView->setSourceChannel(sourceChannel);
 
     auto overrideFlags =
-        std::optional<MessageFlags>(this->thread_->root()->flags);
+        boost::optional<MessageFlags>(this->thread_->root()->flags);
     overrideFlags->set(MessageFlag::DoNotLog);
 
     this->virtualChannel_->addMessage(this->thread_->root(), overrideFlags);
@@ -247,7 +247,7 @@ void ReplyThreadPopup::addMessagesFromThread()
     {
         if (auto msg = msgRef.lock())
         {
-            auto overrideFlags = std::optional<MessageFlags>(msg->flags);
+            auto overrideFlags = boost::optional<MessageFlags>(msg->flags);
             overrideFlags->set(MessageFlag::DoNotLog);
 
             this->virtualChannel_->addMessage(msg, overrideFlags);
@@ -261,7 +261,7 @@ void ReplyThreadPopup::addMessagesFromThread()
                 if (message->replyThread == this->thread_)
                 {
                     auto overrideFlags =
-                        std::optional<MessageFlags>(message->flags);
+                        boost::optional<MessageFlags>(message->flags);
                     overrideFlags->set(MessageFlag::DoNotLog);
 
                     // same reply thread, add message

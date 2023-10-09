@@ -175,7 +175,7 @@ void SharedMessageBuilder::parseHighlights()
 
     if (highlightResult.customSoundUrl)
     {
-        this->highlightSoundUrl_ = *highlightResult.customSoundUrl;
+        this->highlightSoundUrl_ = highlightResult.customSoundUrl.get();
     }
     else
     {
@@ -277,5 +277,4 @@ QString SharedMessageBuilder::stylizeUsername(const QString &username,
 
     return usernameText;
 }
-
 }  // namespace chatterino

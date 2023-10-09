@@ -24,6 +24,7 @@
 #include "widgets/splits/SplitContainer.hpp"
 #include "widgets/Window.hpp"
 
+#include <boost/optional.hpp>
 #include <QDebug>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -33,14 +34,13 @@
 #include <QScreen>
 
 #include <chrono>
-#include <optional>
 
 namespace chatterino {
 namespace {
 
-    std::optional<bool> &shouldMoveOutOfBoundsWindow()
+    boost::optional<bool> &shouldMoveOutOfBoundsWindow()
     {
-        static std::optional<bool> x;
+        static boost::optional<bool> x;
         return x;
     }
 

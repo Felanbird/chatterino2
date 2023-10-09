@@ -2,11 +2,10 @@
 
 #include "common/QLogging.hpp"
 
+#include <boost/optional.hpp>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QString>
-
-#include <optional>
 
 namespace chatterino {
 
@@ -43,15 +42,15 @@ struct PubSubMessageMessage {
     }
 
     template <class InnerClass>
-    std::optional<InnerClass> toInner() const;
+    boost::optional<InnerClass> toInner() const;
 };
 
 template <class InnerClass>
-std::optional<InnerClass> PubSubMessageMessage::toInner() const
+boost::optional<InnerClass> PubSubMessageMessage::toInner() const
 {
     if (this->messageObject.empty())
     {
-        return std::nullopt;
+        return boost::none;
     }
 
     return InnerClass{this->messageObject};

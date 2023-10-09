@@ -5,6 +5,7 @@
 #include "util/ExponentialBackoff.hpp"
 #include "util/QStringHash.hpp"
 
+#include <boost/optional.hpp>
 #include <pajlada/signals/signal.hpp>
 #include <QJsonObject>
 #include <QString>
@@ -14,7 +15,6 @@
 #include <chrono>
 #include <map>
 #include <memory>
-#include <optional>
 #include <thread>
 #include <unordered_map>
 #include <vector>
@@ -188,7 +188,7 @@ private:
     void registerNonce(QString nonce, NonceInfo nonceInfo);
 
     // Find client associated with a nonce
-    std::optional<NonceInfo> findNonceInfo(QString nonce);
+    boost::optional<NonceInfo> findNonceInfo(QString nonce);
 
     std::unordered_map<QString, NonceInfo> nonces_;
 

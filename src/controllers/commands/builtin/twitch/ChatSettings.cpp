@@ -289,7 +289,7 @@ QString slowOff(const CommandContext &ctx)
     }
 
     getHelix()->updateSlowMode(ctx.twitchChannel->roomId(),
-                               currentUser->getUserId(), std::nullopt,
+                               currentUser->getUserId(), boost::none,
                                successCallback, failureCallback(ctx.channel));
 
     return "";
@@ -367,7 +367,7 @@ QString followersOff(const CommandContext &ctx)
     }
 
     getHelix()->updateFollowerMode(
-        ctx.twitchChannel->roomId(), currentUser->getUserId(), std::nullopt,
+        ctx.twitchChannel->roomId(), currentUser->getUserId(), boost::none,
         successCallback, failureCallback(ctx.channel));
 
     return "";

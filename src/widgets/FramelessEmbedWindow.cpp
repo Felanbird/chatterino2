@@ -70,7 +70,7 @@ void FramelessEmbedWindow::showEvent(QShowEvent *)
     }
 
     if (auto parentHwnd =
-            reinterpret_cast<HWND>(getArgs().parentWindowId.value()))
+            reinterpret_cast<HWND>(getArgs().parentWindowId.get()))
     {
         auto handle = reinterpret_cast<HWND>(this->winId());
         if (!::SetParent(handle, parentHwnd))

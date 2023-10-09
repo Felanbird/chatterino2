@@ -2,9 +2,8 @@
 
 #include "common/WindowDescriptors.hpp"
 
+#include <boost/optional.hpp>
 #include <QApplication>
-
-#include <optional>
 
 namespace chatterino {
 
@@ -19,12 +18,12 @@ public:
     bool shouldRunBrowserExtensionHost{};
     // Shows a single chat. Used on windows to embed in another application.
     bool isFramelessEmbed{};
-    std::optional<unsigned long long> parentWindowId{};
+    boost::optional<unsigned long long> parentWindowId{};
 
     // Not settings directly
     bool dontSaveSettings{};
     bool dontLoadMainWindow{};
-    std::optional<WindowLayout> customChannelLayout;
+    boost::optional<WindowLayout> customChannelLayout;
     bool verbose{};
 
 private:

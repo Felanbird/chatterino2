@@ -1,11 +1,10 @@
 #pragma once
 
+#include <boost/optional.hpp>
 #include <magic_enum.hpp>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QString>
-
-#include <optional>
 
 namespace chatterino {
 
@@ -28,16 +27,16 @@ struct PubSubMessage {
     PubSubMessage(QJsonObject _object);
 
     template <class InnerClass>
-    std::optional<InnerClass> toInner();
+    boost::optional<InnerClass> toInner();
 };
 
 template <class InnerClass>
-std::optional<InnerClass> PubSubMessage::toInner()
+boost::optional<InnerClass> PubSubMessage::toInner()
 {
     auto dataValue = this->object.value("data");
     if (!dataValue.isObject())
     {
-        return std::nullopt;
+        return boost::none;
     }
 
     auto data = dataValue.toObject();
@@ -45,13 +44,14 @@ std::optional<InnerClass> PubSubMessage::toInner()
     return InnerClass{this->nonce, data};
 }
 
-static std::optional<PubSubMessage> parsePubSubBaseMessage(const QString &blob)
+static boost::optional<PubSubMessage> parsePubSubBaseMessage(
+    const QString &blob)
 {
     QJsonDocument jsonDoc(QJsonDocument::fromJson(blob.toUtf8()));
 
     if (jsonDoc.isNull())
     {
-        return std::nullopt;
+        return boost::none;
     }
 
     return PubSubMessage(jsonDoc.object());

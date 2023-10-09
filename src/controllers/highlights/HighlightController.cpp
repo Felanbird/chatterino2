@@ -23,7 +23,7 @@ auto highlightPhraseCheck(const HighlightPhrase &highlight) -> HighlightCheck
         [highlight](const auto &args, const auto &badges,
                     const auto &senderName, const auto &originalMessage,
                     const auto &flags,
-                    const auto self) -> std::optional<HighlightResult> {
+                    const auto self) -> boost::optional<HighlightResult> {
             (void)args;        // unused
             (void)badges;      // unused
             (void)senderName;  // unused
@@ -32,15 +32,15 @@ auto highlightPhraseCheck(const HighlightPhrase &highlight) -> HighlightCheck
             if (self)
             {
                 // Phrase checks should ignore highlights from the user
-                return std::nullopt;
+                return boost::none;
             }
 
             if (!highlight.isMatch(originalMessage))
             {
-                return std::nullopt;
+                return boost::none;
             }
 
-            std::optional<QUrl> highlightSoundUrl;
+            boost::optional<QUrl> highlightSoundUrl;
             if (highlight.hasCustomSound())
             {
                 highlightSoundUrl = highlight.getSoundUrl();
@@ -62,7 +62,7 @@ void rebuildSubscriptionHighlights(Settings &settings,
         auto highlightSound = settings.enableSubHighlightSound.getValue();
         auto highlightAlert = settings.enableSubHighlightTaskbar.getValue();
         auto highlightSoundUrlValue = settings.subHighlightSoundUrl.getValue();
-        std::optional<QUrl> highlightSoundUrl;
+        boost::optional<QUrl> highlightSoundUrl;
         if (!highlightSoundUrlValue.isEmpty())
         {
             highlightSoundUrl = highlightSoundUrlValue;
@@ -73,7 +73,7 @@ void rebuildSubscriptionHighlights(Settings &settings,
         checks.emplace_back(HighlightCheck{
             [=](const auto &args, const auto &badges, const auto &senderName,
                 const auto &originalMessage, const auto &flags,
-                const auto self) -> std::optional<HighlightResult> {
+                const auto self) -> boost::optional<HighlightResult> {
                 (void)badges;           // unused
                 (void)senderName;       // unused
                 (void)originalMessage;  // unused
@@ -82,7 +82,7 @@ void rebuildSubscriptionHighlights(Settings &settings,
 
                 if (!args.isSubscriptionMessage)
                 {
-                    return std::nullopt;
+                    return boost::none;
                 }
 
                 auto highlightColor =
@@ -108,7 +108,7 @@ void rebuildWhisperHighlights(Settings &settings,
         auto highlightAlert = settings.enableWhisperHighlightTaskbar.getValue();
         auto highlightSoundUrlValue =
             settings.whisperHighlightSoundUrl.getValue();
-        std::optional<QUrl> highlightSoundUrl;
+        boost::optional<QUrl> highlightSoundUrl;
         if (!highlightSoundUrlValue.isEmpty())
         {
             highlightSoundUrl = highlightSoundUrlValue;
@@ -119,7 +119,7 @@ void rebuildWhisperHighlights(Settings &settings,
         checks.emplace_back(HighlightCheck{
             [=](const auto &args, const auto &badges, const auto &senderName,
                 const auto &originalMessage, const auto &flags,
-                const auto self) -> std::optional<HighlightResult> {
+                const auto self) -> boost::optional<HighlightResult> {
                 (void)badges;           // unused
                 (void)senderName;       // unused
                 (void)originalMessage;  // unused
@@ -128,7 +128,7 @@ void rebuildWhisperHighlights(Settings &settings,
 
                 if (!args.isReceivedWhisper)
                 {
-                    return std::nullopt;
+                    return boost::none;
                 }
 
                 return HighlightResult{
@@ -151,7 +151,7 @@ void rebuildReplyThreadHighlight(Settings &settings,
         auto highlightAlert = settings.enableThreadHighlightTaskbar.getValue();
         auto highlightSoundUrlValue =
             settings.threadHighlightSoundUrl.getValue();
-        std::optional<QUrl> highlightSoundUrl;
+        boost::optional<QUrl> highlightSoundUrl;
         if (!highlightSoundUrlValue.isEmpty())
         {
             highlightSoundUrl = highlightSoundUrlValue;
@@ -162,7 +162,7 @@ void rebuildReplyThreadHighlight(Settings &settings,
             [=](const auto & /*args*/, const auto & /*badges*/,
                 const auto & /*senderName*/, const auto & /*originalMessage*/,
                 const auto &flags,
-                const auto self) -> std::optional<HighlightResult> {
+                const auto self) -> boost::optional<HighlightResult> {
                 if (flags.has(MessageFlag::SubscribedThread) && !self)
                 {
                     return HighlightResult{
@@ -175,7 +175,7 @@ void rebuildReplyThreadHighlight(Settings &settings,
                     };
                 }
 
-                return std::nullopt;
+                return boost::none;
             }});
     }
 }
@@ -219,7 +219,7 @@ void rebuildUserHighlights(Settings &settings,
             [showInMentions](
                 const auto &args, const auto &badges, const auto &senderName,
                 const auto &originalMessage, const auto &flags,
-                const auto self) -> std::optional<HighlightResult> {
+                const auto self) -> boost::optional<HighlightResult> {
                 (void)args;             //unused
                 (void)badges;           //unused
                 (void)senderName;       //unused
@@ -228,7 +228,7 @@ void rebuildUserHighlights(Settings &settings,
 
                 if (!self)
                 {
-                    return std::nullopt;
+                    return boost::none;
                 }
 
                 // Highlight color is provided by the ColorProvider and will be updated accordingly
@@ -246,7 +246,7 @@ void rebuildUserHighlights(Settings &settings,
             [highlight](const auto &args, const auto &badges,
                         const auto &senderName, const auto &originalMessage,
                         const auto &flags,
-                        const auto self) -> std::optional<HighlightResult> {
+                        const auto self) -> boost::optional<HighlightResult> {
                 (void)args;             // unused
                 (void)badges;           // unused
                 (void)originalMessage;  // unused
@@ -255,10 +255,10 @@ void rebuildUserHighlights(Settings &settings,
 
                 if (!highlight.isMatch(senderName))
                 {
-                    return std::nullopt;
+                    return boost::none;
                 }
 
-                std::optional<QUrl> highlightSoundUrl;
+                boost::optional<QUrl> highlightSoundUrl;
                 if (highlight.hasCustomSound())
                 {
                     highlightSoundUrl = highlight.getSoundUrl();
@@ -286,7 +286,7 @@ void rebuildBadgeHighlights(Settings &settings,
             [highlight](const auto &args, const auto &badges,
                         const auto &senderName, const auto &originalMessage,
                         const auto &flags,
-                        const auto self) -> std::optional<HighlightResult> {
+                        const auto self) -> boost::optional<HighlightResult> {
                 (void)args;             // unused
                 (void)senderName;       // unused
                 (void)originalMessage;  // unused
@@ -297,7 +297,7 @@ void rebuildBadgeHighlights(Settings &settings,
                 {
                     if (highlight.isMatch(badge))
                     {
-                        std::optional<QUrl> highlightSoundUrl;
+                        boost::optional<QUrl> highlightSoundUrl;
                         if (highlight.hasCustomSound())
                         {
                             highlightSoundUrl = highlight.getSoundUrl();
@@ -313,7 +313,7 @@ void rebuildBadgeHighlights(Settings &settings,
                     }
                 }
 
-                return std::nullopt;
+                return boost::none;
             }});
     }
 }
@@ -323,7 +323,7 @@ void rebuildBadgeHighlights(Settings &settings,
 namespace chatterino {
 
 HighlightResult::HighlightResult(bool _alert, bool _playSound,
-                                 std::optional<QUrl> _customSoundUrl,
+                                 boost::optional<QUrl> _customSoundUrl,
                                  std::shared_ptr<QColor> _color,
                                  bool _showInMentions)
     : alert(_alert)
@@ -337,7 +337,7 @@ HighlightResult::HighlightResult(bool _alert, bool _playSound,
 HighlightResult HighlightResult::emptyResult()
 {
     return {
-        false, false, std::nullopt, nullptr, false,
+        false, false, boost::none, nullptr, false,
     };
 }
 
@@ -395,7 +395,7 @@ std::ostream &operator<<(std::ostream &os, const HighlightResult &result)
     os << "Alert: " << (result.alert ? "Yes" : "No") << ", "
        << "Play sound: " << (result.playSound ? "Yes" : "No") << " ("
        << (result.customSoundUrl
-               ? result.customSoundUrl->toString().toStdString()
+               ? result.customSoundUrl.get().toString().toStdString()
                : "")
        << ")"
        << ", "

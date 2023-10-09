@@ -2,14 +2,13 @@
 
 #include "widgets/BaseWidget.hpp"
 
+#include <boost/optional.hpp>
 #include <QMenu>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPoint>
 #include <QTimer>
 #include <QWidget>
-
-#include <optional>
 
 namespace chatterino {
 
@@ -32,7 +31,7 @@ public:
 
     Button(BaseWidget *parent = nullptr);
 
-    void setMouseEffectColor(std::optional<QColor> color);
+    void setMouseEffectColor(boost::optional<QColor> color);
     void setPixmap(const QPixmap &pixmap_);
     const QPixmap &getPixmap() const;
 
@@ -95,7 +94,7 @@ private:
     double hoverMultiplier_{0.0};
     QTimer effectTimer_{};
     std::vector<ClickEffect> clickEffects_{};
-    std::optional<QColor> mouseEffectColor_{};
+    boost::optional<QColor> mouseEffectColor_{};
     std::unique_ptr<QMenu> menu_{};
 };
 

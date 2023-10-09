@@ -312,9 +312,9 @@ void NativeMessagingServer::syncChannels(const QJsonArray &twitchChannels)
     this->channelWarmer_ = std::move(updated);
 }
 
-Atomic<std::optional<QString>> &nmIpcError()
+Atomic<boost::optional<QString>> &nmIpcError()
 {
-    static Atomic<std::optional<QString>> x;
+    static Atomic<boost::optional<QString>> x;
     return x;
 }
 

@@ -3,9 +3,8 @@
 #include "controllers/hotkeys/ActionNames.hpp"
 #include "controllers/hotkeys/HotkeyCategory.hpp"
 
+#include <boost/optional/optional.hpp>
 #include <QStringList>
-
-#include <optional>
 
 namespace chatterino {
 
@@ -32,7 +31,7 @@ std::vector<QString> parseHotkeyArguments(QString argumentString)
     return arguments;
 }
 
-std::optional<ActionDefinition> findHotkeyActionDefinition(
+boost::optional<ActionDefinition> findHotkeyActionDefinition(
     HotkeyCategory category, const QString &action)
 {
     auto allActions = actionNames.find(category);

@@ -44,7 +44,7 @@ namespace {
         return defaultValue;
     }
 
-    std::optional<QString> readOptionalStringEnv(const char *envName)
+    boost::optional<QString> readOptionalStringEnv(const char *envName)
     {
         auto envString = std::getenv(envName);
         if (envString != nullptr)
@@ -52,7 +52,7 @@ namespace {
             return QString(envString);
         }
 
-        return std::nullopt;
+        return boost::none;
     }
 
     uint16_t readPortEnv(const char *envName, uint16_t defaultValue)

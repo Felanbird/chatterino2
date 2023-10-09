@@ -3,12 +3,12 @@
 #include "util/RapidjsonHelpers.hpp"
 #include "util/RapidJsonSerializeQString.hpp"
 
+#include <boost/optional.hpp>
 #include <pajlada/serialize.hpp>
 #include <QRegularExpression>
 #include <QString>
 
 #include <memory>
-#include <optional>
 
 namespace chatterino {
 
@@ -59,18 +59,18 @@ public:
         return this->isCaseSensitive_;
     }
 
-    [[nodiscard]] std::optional<QString> match(
+    [[nodiscard]] boost::optional<QString> match(
         const QString &usernameText) const
     {
         if (this->isRegex())
         {
             if (!this->regex_.isValid())
             {
-                return std::nullopt;
+                return boost::none;
             }
             if (this->name().isEmpty())
             {
-                return std::nullopt;
+                return boost::none;
             }
 
             auto workingCopy = usernameText;
@@ -90,7 +90,7 @@ public:
             }
         }
 
-        return std::nullopt;
+        return boost::none;
     }
 
 private:

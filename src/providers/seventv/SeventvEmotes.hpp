@@ -1,5 +1,6 @@
 #pragma once
 
+#include "boost/optional.hpp"
 #include "common/Aliases.hpp"
 #include "common/Atomic.hpp"
 #include "common/FlagsEnum.hpp"
@@ -7,7 +8,6 @@
 #include <QJsonObject>
 
 #include <memory>
-#include <optional>
 
 namespace chatterino {
 
@@ -89,7 +89,7 @@ public:
     SeventvEmotes();
 
     std::shared_ptr<const EmoteMap> globalEmotes() const;
-    std::optional<EmotePtr> globalEmote(const EmoteName &name) const;
+    boost::optional<EmotePtr> globalEmote(const EmoteName &name) const;
     void loadGlobalEmotes();
     void setGlobalEmotes(std::shared_ptr<const EmoteMap> emotes);
     static void loadChannelEmotes(
@@ -104,7 +104,7 @@ public:
      *
      * @return The added emote if an emote was added.
      */
-    static std::optional<EmotePtr> addEmote(
+    static boost::optional<EmotePtr> addEmote(
         Atomic<std::shared_ptr<const EmoteMap>> &map,
         const seventv::eventapi::EmoteAddDispatch &dispatch);
 
@@ -115,7 +115,7 @@ public:
      *
      * @return The updated emote if any emote was updated.
      */
-    static std::optional<EmotePtr> updateEmote(
+    static boost::optional<EmotePtr> updateEmote(
         Atomic<std::shared_ptr<const EmoteMap>> &map,
         const seventv::eventapi::EmoteUpdateDispatch &dispatch);
 
@@ -126,7 +126,7 @@ public:
      *
      * @return The removed emote if any emote was removed.
      */
-    static std::optional<EmotePtr> removeEmote(
+    static boost::optional<EmotePtr> removeEmote(
         Atomic<std::shared_ptr<const EmoteMap>> &map,
         const seventv::eventapi::EmoteRemoveDispatch &dispatch);
 

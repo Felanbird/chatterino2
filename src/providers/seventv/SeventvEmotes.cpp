@@ -11,7 +11,6 @@
 #include "providers/seventv/SeventvAPI.hpp"
 #include "providers/twitch/TwitchChannel.hpp"
 #include "singletons/Settings.hpp"
-#include "util/Helpers.hpp"
 
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -110,7 +109,7 @@ CreateEmoteResult createEmote(const QJsonObject &activeEmote,
     auto emote =
         Emote({emoteName, imageSet, tooltip,
                Url{EMOTE_LINK_FORMAT.arg(emoteId.string)}, zeroWidth, emoteId,
-               author, makeConditionedOptional(aliasedName, baseEmoteName)});
+               author, boost::make_optional(aliasedName, baseEmoteName)});
 
     return {emote, emoteId, emoteName, !emote.images.getImage1()->isEmpty()};
 }
@@ -163,7 +162,7 @@ EmotePtr createUpdatedEmote(const EmotePtr &oldEmote,
     bool toNonAliased = oldEmote->baseName.has_value() &&
                         dispatch.emoteName == oldEmote->baseName->string;
 
-    auto baseName = oldEmote->baseName.value_or(oldEmote->name);
+    auto baseName = oldEmote->baseName.get_value_or(oldEmote->name);
     auto emote = std::make_shared<const Emote>(Emote(
         {EmoteName{dispatch.emoteName}, oldEmote->images,
          toNonAliased
@@ -171,7 +170,7 @@ EmotePtr createUpdatedEmote(const EmotePtr &oldEmote,
              : createAliasedTooltip(dispatch.emoteName, baseName.string,
                                     oldEmote->author.string, false),
          oldEmote->homePage, oldEmote->zeroWidth, oldEmote->id,
-         oldEmote->author, makeConditionedOptional(!toNonAliased, baseName)}));
+         oldEmote->author, boost::make_optional(!toNonAliased, baseName)}));
     return emote;
 }
 
@@ -192,14 +191,15 @@ std::shared_ptr<const EmoteMap> SeventvEmotes::globalEmotes() const
     return this->global_.get();
 }
 
-std::optional<EmotePtr> SeventvEmotes::globalEmote(const EmoteName &name) const
+boost::optional<EmotePtr> SeventvEmotes::globalEmote(
+    const EmoteName &name) const
 {
     auto emotes = this->global_.get();
     auto it = emotes->find(name);
 
     if (it == emotes->end())
     {
-        return std::nullopt;
+        return boost::none;
     }
     return it->second;
 }
@@ -328,7 +328,7 @@ void SeventvEmotes::loadChannelEmotes(
         });
 }
 
-std::optional<EmotePtr> SeventvEmotes::addEmote(
+boost::optional<EmotePtr> SeventvEmotes::addEmote(
     Atomic<std::shared_ptr<const EmoteMap>> &map,
     const EmoteAddDispatch &dispatch)
 {
@@ -336,7 +336,7 @@ std::optional<EmotePtr> SeventvEmotes::addEmote(
     auto emoteData = dispatch.emoteJson["data"].toObject();
     if (emoteData.empty() || !checkEmoteVisibility(emoteData))
     {
-        return std::nullopt;
+        return boost::none;
     }
 
     // This copies the map.
@@ -347,7 +347,7 @@ std::optional<EmotePtr> SeventvEmotes::addEmote(
         // Incoming emote didn't contain any images, abort
         qCDebug(chatterinoSeventv)
             << "Emote without images:" << dispatch.emoteJson;
-        return std::nullopt;
+        return boost::none;
     }
     auto emote = std::make_shared<const Emote>(std::move(result.emote));
     updatedMap[result.name] = emote;
@@ -356,7 +356,7 @@ std::optional<EmotePtr> SeventvEmotes::addEmote(
     return emote;
 }
 
-std::optional<EmotePtr> SeventvEmotes::updateEmote(
+boost::optional<EmotePtr> SeventvEmotes::updateEmote(
     Atomic<std::shared_ptr<const EmoteMap>> &map,
     const EmoteUpdateDispatch &dispatch)
 {
@@ -364,7 +364,7 @@ std::optional<EmotePtr> SeventvEmotes::updateEmote(
     auto oldEmote = oldMap->findEmote(dispatch.emoteName, dispatch.emoteID);
     if (oldEmote == oldMap->end())
     {
-        return std::nullopt;
+        return boost::none;
     }
 
     // This copies the map.
@@ -378,7 +378,7 @@ std::optional<EmotePtr> SeventvEmotes::updateEmote(
     return emote;
 }
 
-std::optional<EmotePtr> SeventvEmotes::removeEmote(
+boost::optional<EmotePtr> SeventvEmotes::removeEmote(
     Atomic<std::shared_ptr<const EmoteMap>> &map,
     const EmoteRemoveDispatch &dispatch)
 {
@@ -389,7 +389,7 @@ std::optional<EmotePtr> SeventvEmotes::removeEmote(
     {
         // We already copied the map at this point and are now discarding the copy.
         // This is fine, because this case should be really rare.
-        return std::nullopt;
+        return boost::none;
     }
     auto emote = it->second;
     updatedMap.erase(it);

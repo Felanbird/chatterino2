@@ -13,6 +13,7 @@
 #include "singletons/Settings.hpp"
 #include "widgets/splits/InputCompletionPopup.hpp"
 
+#include <boost/optional/optional_io.hpp>
 #include <gtest/gtest.h>
 #include <QDir>
 #include <QFile>

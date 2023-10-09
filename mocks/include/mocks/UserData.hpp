@@ -11,9 +11,9 @@ public:
 
     // Get extra data about a user
     // If the user does not have any extra data, return none
-    std::optional<UserData> getUser(const QString &userID) const override
+    boost::optional<UserData> getUser(const QString &userID) const override
     {
-        return std::nullopt;
+        return boost::none;
     }
 
     // Update or insert extra data for the user's color override

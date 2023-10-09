@@ -127,7 +127,7 @@ int HotkeyController::replaceHotkey(QString oldName,
     return this->hotkeys_.append(newHotkey);
 }
 
-std::optional<HotkeyCategory> HotkeyController::hotkeyCategoryFromName(
+boost::optional<HotkeyCategory> HotkeyController::hotkeyCategoryFromName(
     QString categoryName)
 {
     for (const auto &[category, data] : this->categories())

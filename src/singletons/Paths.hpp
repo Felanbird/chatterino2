@@ -1,8 +1,7 @@
 #pragma once
 
+#include <boost/optional.hpp>
 #include <QString>
-
-#include <optional>
 
 namespace chatterino {
 
@@ -52,7 +51,7 @@ private:
     void initRootDirectory();
     void initSubDirectories();
 
-    std::optional<bool> portable_;
+    boost::optional<bool> portable_;
 
     // Directory for cache files. Same as <appDataDirectory>/Misc
     QString cacheDirectory_;

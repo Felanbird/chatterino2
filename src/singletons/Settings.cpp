@@ -87,7 +87,7 @@ bool Settings::isMutedChannel(const QString &channelName)
     return false;
 }
 
-std::optional<QString> Settings::matchNickname(const QString &usernameText)
+boost::optional<QString> Settings::matchNickname(const QString &usernameText)
 {
     auto nicknames = this->nicknames.readOnly();
 
@@ -99,7 +99,7 @@ std::optional<QString> Settings::matchNickname(const QString &usernameText)
         }
     }
 
-    return std::nullopt;
+    return boost::none;
 }
 
 void Settings::mute(const QString &channelName)

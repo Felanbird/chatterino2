@@ -291,12 +291,13 @@ bool ChannelView::paused() const
     return this->pausable() && !this->pauses_.empty();
 }
 
-void ChannelView::pause(PauseReason reason, std::optional<uint> msecs)
+void ChannelView::pause(PauseReason reason, boost::optional<uint> msecs)
 {
     if (msecs)
     {
         /// Msecs has a value
-        auto timePoint = SteadyClock::now() + std::chrono::milliseconds(*msecs);
+        auto timePoint =
+            SteadyClock::now() + std::chrono::milliseconds(msecs.get());
         auto it = this->pauses_.find(reason);
 
         if (it == this->pauses_.end())
@@ -307,19 +308,15 @@ void ChannelView::pause(PauseReason reason, std::optional<uint> msecs)
         else
         {
             /// If the new time point is newer then we override.
-            auto &previousTimePoint = it->second;
-            if (previousTimePoint.has_value() &&
-                previousTimePoint.value() < timePoint)
-            {
-                previousTimePoint = timePoint;
-            }
+            if (it->second && it->second.get() < timePoint)
+                it->second = timePoint;
         }
     }
     else
     {
         /// Msecs is none -> pause is infinite.
         /// We just override the value.
-        this->pauses_[reason] = std::nullopt;
+        this->pauses_[reason] = boost::none;
     }
 
     this->updatePauses();
@@ -342,7 +339,7 @@ void ChannelView::updatePauses()
         this->unpaused();
 
         /// No pauses so we can stop the timer
-        this->pauseEnd_ = std::nullopt;
+        this->pauseEnd_ = boost::none;
         this->pauseTimer_.stop();
 
         this->scrollBar_->offsetMaximum(this->pauseScrollMaximumOffset_);
@@ -358,7 +355,7 @@ void ChannelView::updatePauses()
                          }))
     {
         /// Some of the pauses are infinite
-        this->pauseEnd_ = std::nullopt;
+        this->pauseEnd_ = boost::none;
         this->pauseTimer_.stop();
     }
     else
@@ -369,7 +366,7 @@ void ChannelView::updatePauses()
                              [](auto &&a, auto &&b) {
                                  return a.second > b.second;
                              })
-                ->second.value();
+                ->second.get();
 
         if (pauseEnd != this->pauseEnd_)
         {
@@ -648,12 +645,13 @@ bool ChannelView::getEnableScrollingToBottom() const
     return this->enableScrollingToBottom_;
 }
 
-void ChannelView::setOverrideFlags(std::optional<MessageElementFlags> value)
+void ChannelView::setOverrideFlags(boost::optional<MessageElementFlags> value)
 {
     this->overrideFlags_ = std::move(value);
 }
 
-const std::optional<MessageElementFlags> &ChannelView::getOverrideFlags() const
+const boost::optional<MessageElementFlags> &ChannelView::getOverrideFlags()
+    const
 {
     return this->overrideFlags_;
 }
@@ -699,7 +697,7 @@ void ChannelView::setChannel(ChannelPtr underlyingChannel)
     this->channelConnections_.managedConnect(
         underlyingChannel->messageAppended,
         [this](MessagePtr &message,
-               std::optional<MessageFlags> overridingFlags) {
+               boost::optional<MessageFlags> overridingFlags) {
             if (this->shouldIncludeMessage(message))
             {
                 if (this->channel_->lastDate_ != QDate::currentDate())
@@ -715,12 +713,12 @@ void ChannelView::setChannel(ChannelPtr underlyingChannel)
                 // logging will be handled. Prevent duplications.
                 if (overridingFlags)
                 {
-                    overridingFlags->set(MessageFlag::DoNotLog);
+                    overridingFlags.get().set(MessageFlag::DoNotLog);
                 }
                 else
                 {
                     overridingFlags = MessageFlags(message->flags);
-                    overridingFlags->set(MessageFlag::DoNotLog);
+                    overridingFlags.get().set(MessageFlag::DoNotLog);
                 }
 
                 this->channel_->addMessage(message, overridingFlags);
@@ -766,7 +764,7 @@ void ChannelView::setChannel(ChannelPtr underlyingChannel)
     this->channelConnections_.managedConnect(
         this->channel_->messageAppended,
         [this](MessagePtr &message,
-               std::optional<MessageFlags> overridingFlags) {
+               boost::optional<MessageFlags> overridingFlags) {
             this->messageAppended(message, std::move(overridingFlags));
         });
 
@@ -882,12 +880,12 @@ bool ChannelView::hasSourceChannel() const
 }
 
 void ChannelView::messageAppended(MessagePtr &message,
-                                  std::optional<MessageFlags> overridingFlags)
+                                  boost::optional<MessageFlags> overridingFlags)
 {
     auto *messageFlags = &message->flags;
     if (overridingFlags)
     {
-        messageFlags = &*overridingFlags;
+        messageFlags = overridingFlags.get_ptr();
     }
 
     auto messageRef = std::make_shared<MessageLayout>(message);
@@ -1111,7 +1109,7 @@ MessageElementFlags ChannelView::getFlags() const
 
     if (this->overrideFlags_)
     {
-        return *this->overrideFlags_;
+        return this->overrideFlags_.get();
     }
 
     MessageElementFlags flags = app->windows->getWordFlags();

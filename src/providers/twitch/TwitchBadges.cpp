@@ -149,8 +149,8 @@ void TwitchBadges::loaded()
     }
 }
 
-std::optional<EmotePtr> TwitchBadges::badge(const QString &set,
-                                            const QString &version) const
+boost::optional<EmotePtr> TwitchBadges::badge(const QString &set,
+                                              const QString &version) const
 {
     auto badgeSets = this->badgeSets_.access();
     auto it = badgeSets->find(set);
@@ -162,10 +162,10 @@ std::optional<EmotePtr> TwitchBadges::badge(const QString &set,
             return it2->second;
         }
     }
-    return std::nullopt;
+    return boost::none;
 }
 
-std::optional<EmotePtr> TwitchBadges::badge(const QString &set) const
+boost::optional<EmotePtr> TwitchBadges::badge(const QString &set) const
 {
     auto badgeSets = this->badgeSets_.access();
     auto it = badgeSets->find(set);
@@ -176,7 +176,7 @@ std::optional<EmotePtr> TwitchBadges::badge(const QString &set) const
             return it->second.begin()->second;
         }
     }
-    return std::nullopt;
+    return boost::none;
 }
 
 void TwitchBadges::getBadgeIcon(const QString &name, BadgeIconCallback callback)

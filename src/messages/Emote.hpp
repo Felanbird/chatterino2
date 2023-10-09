@@ -3,10 +3,11 @@
 #include "common/Aliases.hpp"
 #include "messages/ImageSet.hpp"
 
+#include <boost/optional.hpp>
+
 #include <functional>
 #include <memory>
 #include <mutex>
-#include <optional>
 #include <unordered_map>
 
 namespace chatterino {
@@ -23,7 +24,7 @@ struct Emote {
      * If this emote is aliased, this contains
      * the original (base) name of the emote.
      */
-    std::optional<EmoteName> baseName;
+    boost::optional<EmoteName> baseName;
 
     // FOURTF: no solution yet, to be refactored later
     const QString &getCopyString() const

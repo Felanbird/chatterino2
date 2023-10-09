@@ -2,12 +2,11 @@
 
 #include "providers/seventv/eventapi/Subscription.hpp"
 
+#include <boost/optional.hpp>
 #include <magic_enum.hpp>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QString>
-
-#include <optional>
 
 namespace chatterino::seventv::eventapi {
 
@@ -19,22 +18,22 @@ struct Message {
     Message(QJsonObject _json);
 
     template <class InnerClass>
-    std::optional<InnerClass> toInner();
+    boost::optional<InnerClass> toInner();
 };
 
 template <class InnerClass>
-std::optional<InnerClass> Message::toInner()
+boost::optional<InnerClass> Message::toInner()
 {
     return InnerClass{this->data};
 }
 
-static std::optional<Message> parseBaseMessage(const QString &blob)
+static boost::optional<Message> parseBaseMessage(const QString &blob)
 {
     QJsonDocument jsonDoc(QJsonDocument::fromJson(blob.toUtf8()));
 
     if (jsonDoc.isNull())
     {
-        return std::nullopt;
+        return boost::none;
     }
 
     return Message(jsonDoc.object());

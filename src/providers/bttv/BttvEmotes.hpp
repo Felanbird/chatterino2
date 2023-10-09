@@ -3,8 +3,9 @@
 #include "common/Aliases.hpp"
 #include "common/Atomic.hpp"
 
+#include <boost/optional.hpp>
+
 #include <memory>
-#include <optional>
 
 namespace chatterino {
 
@@ -26,7 +27,7 @@ public:
     BttvEmotes();
 
     std::shared_ptr<const EmoteMap> emotes() const;
-    std::optional<EmotePtr> emote(const EmoteName &name) const;
+    boost::optional<EmotePtr> emote(const EmoteName &name) const;
     void loadEmotes();
     void setEmotes(std::shared_ptr<const EmoteMap> emotes);
     static void loadChannel(std::weak_ptr<Channel> channel,
@@ -54,7 +55,7 @@ public:
      *
      * @return pair<old emote, new emote> if any emote was updated.
      */
-    static std::optional<std::pair<EmotePtr, EmotePtr>> updateEmote(
+    static boost::optional<std::pair<EmotePtr, EmotePtr>> updateEmote(
         const QString &channelDisplayName,
         Atomic<std::shared_ptr<const EmoteMap>> &channelEmoteMap,
         const BttvLiveUpdateEmoteUpdateAddMessage &message);
@@ -66,7 +67,7 @@ public:
      *
      * @return The removed emote if any emote was removed.
      */
-    static std::optional<EmotePtr> removeEmote(
+    static boost::optional<EmotePtr> removeEmote(
         Atomic<std::shared_ptr<const EmoteMap>> &channelEmoteMap,
         const BttvLiveUpdateEmoteRemoveMessage &message);
 

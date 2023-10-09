@@ -3,6 +3,7 @@
 #include "common/UniqueAccess.hpp"
 #include "util/QStringHash.hpp"
 
+#include <boost/optional.hpp>
 #include <pajlada/signals/signal.hpp>
 #include <QIcon>
 #include <QJsonObject>
@@ -10,7 +11,6 @@
 #include <QString>
 
 #include <memory>
-#include <optional>
 #include <queue>
 #include <shared_mutex>
 #include <unordered_map>
@@ -35,10 +35,10 @@ public:
     static TwitchBadges *instance();
 
     // Get badge from name and version
-    std::optional<EmotePtr> badge(const QString &set,
-                                  const QString &version) const;
+    boost::optional<EmotePtr> badge(const QString &set,
+                                    const QString &version) const;
     // Get first matching badge with name, regardless of version
-    std::optional<EmotePtr> badge(const QString &set) const;
+    boost::optional<EmotePtr> badge(const QString &set) const;
 
     void getBadgeIcon(const QString &name, BadgeIconCallback callback);
     void getBadgeIcon(const DisplayBadge &badge, BadgeIconCallback callback);

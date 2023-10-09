@@ -119,10 +119,10 @@ namespace {
         return emotes;
     }
 
-    std::optional<EmotePtr> parseAuthorityBadge(const QJsonObject &badgeUrls,
-                                                const QString &tooltip)
+    boost::optional<EmotePtr> parseAuthorityBadge(const QJsonObject &badgeUrls,
+                                                  const QString &tooltip)
     {
-        std::optional<EmotePtr> authorityBadge;
+        boost::optional<EmotePtr> authorityBadge;
 
         if (!badgeUrls.isEmpty())
         {
@@ -173,7 +173,7 @@ std::shared_ptr<const EmoteMap> FfzEmotes::emotes() const
     return this->global_.get();
 }
 
-std::optional<EmotePtr> FfzEmotes::emote(const EmoteName &name) const
+boost::optional<EmotePtr> FfzEmotes::emote(const EmoteName &name) const
 {
     auto emotes = this->global_.get();
     auto it = emotes->find(name);
@@ -181,7 +181,7 @@ std::optional<EmotePtr> FfzEmotes::emote(const EmoteName &name) const
     {
         return it->second;
     }
-    return std::nullopt;
+    return boost::none;
 }
 
 void FfzEmotes::loadEmotes()
@@ -214,8 +214,8 @@ void FfzEmotes::setEmotes(std::shared_ptr<const EmoteMap> emotes)
 void FfzEmotes::loadChannel(
     std::weak_ptr<Channel> channel, const QString &channelID,
     std::function<void(EmoteMap &&)> emoteCallback,
-    std::function<void(std::optional<EmotePtr>)> modBadgeCallback,
-    std::function<void(std::optional<EmotePtr>)> vipBadgeCallback,
+    std::function<void(boost::optional<EmotePtr>)> modBadgeCallback,
+    std::function<void(boost::optional<EmotePtr>)> vipBadgeCallback,
     bool manualRefresh)
 {
     qCDebug(chatterinoFfzemotes)

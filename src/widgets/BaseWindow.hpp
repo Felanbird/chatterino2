@@ -95,7 +95,7 @@ protected:
 
     void updateScale();
 
-    std::optional<QColor> overrideBackgroundColor_;
+    boost::optional<QColor> overrideBackgroundColor_;
 
 private:
     void init();
