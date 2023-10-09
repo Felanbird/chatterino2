@@ -6,7 +6,7 @@ on:
     branches:
       - master
       - "bugfix-release/*"
-      - "release/*"
+      - "nightly-release/*"
   pull_request:
   workflow_dispatch:
   merge_group:
@@ -434,7 +434,7 @@ jobs:
   create-release:
     needs: build
     runs-on: ubuntu-latest
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/master')
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/nightly-build/without-tab-completion-changes')
 
     steps:
       - uses: actions/checkout@v4
@@ -521,6 +521,6 @@ jobs:
 
       - name: Update nightly-build tag
         run: |
-          git tag -f nightly-build
-          git push -f origin nightly-build
+          git tag -f nightly-build-tab-completion
+          git push -f origin nightly-build-tab-completion
         shell: bash
