@@ -13,7 +13,7 @@ namespace chatterino::completion {
 
 struct CommandItem {
     QString name{};
-    QString prefix{};
+    QChar prefix{};
 };
 
 class CommandSource : public Source
