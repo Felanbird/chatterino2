@@ -153,6 +153,4 @@ std::vector<T> splitListIntoBatches(const T &list, int batchSize = 100)
     return batches;
 }
 
-bool compareEmoteStrings(const QString &a, const QString &b);
-
 }  // namespace chatterino

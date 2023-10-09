@@ -1,9 +1,7 @@
 #include "Application.hpp"
 #include "common/Aliases.hpp"
+#include "common/CompletionModel.hpp"
 #include "controllers/accounts/AccountController.hpp"
-#include "controllers/completion/strategies/ClassicEmoteStrategy.hpp"
-#include "controllers/completion/strategies/ClassicUserStrategy.hpp"
-#include "controllers/completion/strategies/Strategy.hpp"
 #include "messages/Emote.hpp"
 #include "mocks/EmptyApplication.hpp"
 #include "mocks/Helix.hpp"
@@ -26,7 +24,6 @@
 namespace {
 
 using namespace chatterino;
-using namespace chatterino::completion;
 using ::testing::Exactly;
 
 class MockTwitchIrcServer : public ITwitchIrcServer
@@ -150,6 +147,8 @@ protected:
         this->mockApplication->emotes.initialize(*this->settings, *this->paths);
 
         this->channelPtr = std::make_shared<MockChannel>("icelys");
+        this->completionModel =
+            std::make_unique<CompletionModel>(*this->channelPtr);
 
         this->initializeEmotes();
     }
@@ -160,6 +159,7 @@ protected:
         this->settings.reset();
         this->paths.reset();
         this->mockHelix.reset();
+        this->completionModel.reset();
         this->channelPtr.reset();
 
         this->settingsDir_.reset();
@@ -173,6 +173,7 @@ protected:
     std::unique_ptr<mock::Helix> mockHelix;
 
     ChannelPtr channelPtr;
+    std::unique_ptr<CompletionModel> completionModel;
 
 private:
     void initializeEmotes()
@@ -204,29 +205,28 @@ private:
     }
 
 protected:
-    auto queryClassicEmoteCompletion(const QString &fullQuery)
+    auto queryEmoteCompletion(const QString &fullQuery)
     {
-        EmoteSource source(this->channelPtr.get(),
-                           std::make_unique<ClassicEmoteStrategy>());
-        source.update(fullQuery);
+        // At the moment, buildCompletionEmoteList does not want the ':'.
+        QString normalizedQuery = fullQuery;
+        if (normalizedQuery.startsWith(':'))
+        {
+            normalizedQuery = normalizedQuery.mid(1);
+        }
 
-        std::vector<EmoteItem> out(source.output());
-        return out;
+        return chatterino::detail::buildCompletionEmoteList(normalizedQuery,
+                                                            this->channelPtr);
     }
 
-    auto queryClassicTabCompletion(const QString &fullQuery, bool isFirstWord)
+    auto queryTabCompletion(const QString &fullQuery, bool isFirstWord)
     {
-        EmoteSource source(this->channelPtr.get(),
-                           std::make_unique<ClassicTabEmoteStrategy>());
-        source.update(fullQuery);
-
-        QStringList m;
-        source.addToStringList(m, 0, isFirstWord);
-        return m;
+        this->completionModel->refresh(fullQuery, isFirstWord);
+        return this->completionModel->allItems();
     }
 };
 
-void containsRoughly(std::span<EmoteItem> span, std::set<QString> values)
+void containsRoughly(std::span<detail::CompletionEmote> span,
+                     std::set<QString> values)
 {
     for (const auto &v : values)
     {
@@ -244,26 +244,27 @@ void containsRoughly(std::span<EmoteItem> span, std::set<QString> values)
     }
 }
 
-TEST_F(InputCompletionTest, ClassicEmoteNameFiltering)
+TEST_F(InputCompletionTest, EmoteNameFiltering)
 {
     // The completion doesn't guarantee an ordering for a specific category of emotes.
     // This tests a specific implementation of the underlying std::unordered_map,
     // so depending on the standard library used when compiling, this might yield
     // different results.
 
-    auto completion = queryClassicEmoteCompletion(":feels");
+    auto completion = queryEmoteCompletion(":feels");
     ASSERT_EQ(completion.size(), 3);
     // all these matches are BTTV global emotes
     ASSERT_EQ(completion[0].displayName, "FeelsBirthdayMan");
     ASSERT_EQ(completion[1].displayName, "FeelsBadMan");
     ASSERT_EQ(completion[2].displayName, "FeelsGoodMan");
 
-    completion = queryClassicEmoteCompletion(":)");
+    // all these matches are Twitch global emotes
+    completion = queryEmoteCompletion(":)");
     ASSERT_EQ(completion.size(), 3);
     ASSERT_EQ(completion[0].displayName, ":)");  // Exact match with : prefix
     containsRoughly({completion.begin() + 1, 2}, {":-)", "B-)"});
 
-    completion = queryClassicEmoteCompletion(":cat");
+    completion = queryEmoteCompletion(":cat");
     ASSERT_TRUE(completion.size() >= 2);
     // emoji exact match comes first
     ASSERT_EQ(completion[0].displayName, "cat");
@@ -271,9 +272,9 @@ TEST_F(InputCompletionTest, ClassicEmoteNameFiltering)
     ASSERT_EQ(completion[1].displayName, "CatBag");
 }
 
-TEST_F(InputCompletionTest, ClassicEmoteExactNameMatching)
+TEST_F(InputCompletionTest, EmoteExactNameMatching)
 {
-    auto completion = queryClassicEmoteCompletion(":cat");
+    auto completion = queryEmoteCompletion(":cat");
     ASSERT_TRUE(completion.size() >= 2);
     // emoji exact match comes first
     ASSERT_EQ(completion[0].displayName, "cat");
@@ -281,22 +282,22 @@ TEST_F(InputCompletionTest, ClassicEmoteExactNameMatching)
     ASSERT_EQ(completion[1].displayName, "CatBag");
 
     // not exactly "salt", SaltyCorn BTTV emote comes first
-    completion = queryClassicEmoteCompletion(":sal");
+    completion = queryEmoteCompletion(":sal");
     ASSERT_TRUE(completion.size() >= 3);
     ASSERT_EQ(completion[0].displayName, "SaltyCorn");
     ASSERT_EQ(completion[1].displayName, "green_salad");
     ASSERT_EQ(completion[2].displayName, "salt");
 
     // exactly "salt", emoji comes first
-    completion = queryClassicEmoteCompletion(":salt");
+    completion = queryEmoteCompletion(":salt");
     ASSERT_TRUE(completion.size() >= 2);
     ASSERT_EQ(completion[0].displayName, "salt");
     ASSERT_EQ(completion[1].displayName, "SaltyCorn");
 }
 
-TEST_F(InputCompletionTest, ClassicEmoteProviderOrdering)
+TEST_F(InputCompletionTest, EmoteProviderOrdering)
 {
-    auto completion = queryClassicEmoteCompletion(":clap");
+    auto completion = queryEmoteCompletion(":clap");
     // Current implementation leads to the exact first match being ignored when
     // checking for exact matches. This is probably not intended behavior but
     // this test is just verifying that the implementation stays the same.
@@ -323,13 +324,13 @@ TEST_F(InputCompletionTest, ClassicEmoteProviderOrdering)
     ASSERT_EQ(completion[4].providerName, "Emoji");
 }
 
-TEST_F(InputCompletionTest, ClassicTabCompletionEmote)
+TEST_F(InputCompletionTest, TabCompletionEmote)
 {
-    auto completion = queryClassicTabCompletion(":feels", false);
+    auto completion = queryTabCompletion(":feels", false);
     ASSERT_EQ(completion.size(), 0);  // : prefix matters here
 
     // no : prefix defaults to emote completion
-    completion = queryClassicTabCompletion("feels", false);
+    completion = queryTabCompletion("feels", false);
     ASSERT_EQ(completion.size(), 3);
     // note: different order from : menu
     ASSERT_EQ(completion[0], "FeelsBadMan ");
@@ -337,22 +338,22 @@ TEST_F(InputCompletionTest, ClassicTabCompletionEmote)
     ASSERT_EQ(completion[2], "FeelsGoodMan ");
 
     // no : prefix, emote completion. Duplicate Clap should be removed
-    completion = queryClassicTabCompletion("cla", false);
+    completion = queryTabCompletion("cla", false);
     ASSERT_EQ(completion.size(), 2);
     ASSERT_EQ(completion[0], "Clap ");
     ASSERT_EQ(completion[1], "Clap2 ");
 
-    completion = queryClassicTabCompletion("peepoHappy", false);
+    completion = queryTabCompletion("peepoHappy", false);
     ASSERT_EQ(completion.size(), 0);  // no peepoHappy emote
 
-    completion = queryClassicTabCompletion("Aware", false);
+    completion = queryTabCompletion("Aware", false);
     ASSERT_EQ(completion.size(), 1);
     ASSERT_EQ(completion[0], "Aware ");  // trailing space added
 }
 
-TEST_F(InputCompletionTest, ClassicTabCompletionEmoji)
+TEST_F(InputCompletionTest, TabCompletionEmoji)
 {
-    auto completion = queryClassicTabCompletion(":cla", false);
+    auto completion = queryTabCompletion(":cla", false);
     ASSERT_EQ(completion.size(), 8);
     ASSERT_EQ(completion[0], ":clap: ");
     ASSERT_EQ(completion[1], ":clap_tone1: ");

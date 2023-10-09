@@ -1,6 +1,7 @@
 #include "EmotePopup.hpp"
 
 #include "Application.hpp"
+#include "common/CompletionModel.hpp"
 #include "common/QLogging.hpp"
 #include "controllers/accounts/AccountController.hpp"
 #include "controllers/hotkeys/HotkeyController.hpp"
@@ -15,7 +16,6 @@
 #include "singletons/Emotes.hpp"
 #include "singletons/Settings.hpp"
 #include "singletons/WindowManager.hpp"
-#include "util/Helpers.hpp"
 #include "widgets/helper/ChannelView.hpp"
 #include "widgets/helper/TrimRegExpValidator.hpp"
 #include "widgets/Notebook.hpp"
@@ -58,7 +58,8 @@ auto makeEmoteMessage(const EmoteMap &map, const MessageElementFlag &emoteFlag)
     std::sort(vec.begin(), vec.end(),
               [](const std::pair<EmoteName, EmotePtr> &l,
                  const std::pair<EmoteName, EmotePtr> &r) {
-                  return compareEmoteStrings(l.first.string, r.first.string);
+                  return CompletionModel::compareStrings(l.first.string,
+                                                         r.first.string);
               });
     for (const auto &emote : vec)
     {

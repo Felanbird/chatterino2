@@ -22,7 +22,6 @@ class EffectLabel;
 class MessageThread;
 class ResizingTextEdit;
 class ChannelView;
-enum class CompletionKind;
 
 class SplitInput : public BaseWidget
 {
@@ -100,7 +99,7 @@ protected:
     void onTextChanged();
     void updateEmoteButton();
     void updateCompletionPopup();
-    void showCompletionPopup(const QString &text, CompletionKind kind);
+    void showCompletionPopup(const QString &text, bool emoteCompletion);
     void hideCompletionPopup();
     void insertCompletionText(const QString &input_) const;
     void openEmotePopup();
