@@ -20,6 +20,8 @@ public:
 
     pajlada::Signals::Signal<Button> buttonClicked;
 
+    void setWordWrap(bool wrap);
+
 private:
     void updateStatusChanged(Updates::Status status);
 
