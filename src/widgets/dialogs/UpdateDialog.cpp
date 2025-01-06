@@ -43,6 +43,7 @@ UpdateDialog::UpdateDialog()
 
     this->setScaleIndependantHeight(150);
     this->setScaleIndependantWidth(250);
+    this->ui_.label->setWordWrap(true);
 }
 
 void UpdateDialog::updateStatusChanged(Updates::Status status)
