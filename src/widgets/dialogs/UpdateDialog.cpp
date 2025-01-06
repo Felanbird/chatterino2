@@ -6,6 +6,7 @@
 #include "widgets/Label.hpp"
 
 #include <QDialogButtonBox>
+#include <QLabel>
 #include <QPushButton>
 #include <QVBoxLayout>
 
